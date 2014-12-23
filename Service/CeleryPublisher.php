@@ -16,13 +16,16 @@ use ONGR\TaskMessengerBundle\Service\Exception\PublisherConnectionException;
 use PhpAmqpLib\Connection\AMQPConnection;
 use PhpAmqpLib\Exception\AMQPExceptionInterface;
 use PhpAmqpLib\Message\AMQPMessage;
-use Symfony\Bridge\Monolog\Logger;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 
 /**
  * Celery publisher implementation.
  */
-class CeleryPublisher implements TaskPublisherInterface
+class CeleryPublisher implements TaskPublisherInterface, LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     /**
      * @var AMQPConnection
      */
@@ -37,11 +40,6 @@ class CeleryPublisher implements TaskPublisherInterface
      * @var string
      */
     protected $environment;
-
-    /**
-     * @var Logger
-     */
-    protected $logger = null;
 
     /**
      * @var bool
@@ -145,14 +143,6 @@ class CeleryPublisher implements TaskPublisherInterface
         }
 
         return $environment;
-    }
-
-    /**
-     * @param Logger $logger
-     */
-    public function setLogger(Logger $logger)
-    {
-        $this->logger = $logger;
     }
 
     /**

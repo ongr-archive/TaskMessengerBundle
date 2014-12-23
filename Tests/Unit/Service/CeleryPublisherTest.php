@@ -25,7 +25,7 @@ class CeleryPublisherTest extends \PHPUnit_Framework_TestCase
         $out = [];
 
         // Case #0: logger.
-        $loggerMock = $this->getMockBuilder('\Symfony\Bridge\Monolog\Logger')
+        $loggerMock = $this->getMockBuilder('Psr\Log\LoggerInterface')
             ->disableOriginalConstructor()
             ->getMock();
         $out[] = ['setLogger', $loggerMock];
