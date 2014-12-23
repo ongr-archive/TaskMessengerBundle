@@ -122,8 +122,8 @@ class CeleryPublisherTest extends \PHPUnit_Framework_TestCase
         $task->setEnvironment($expectedEnvironment);
 
         $publisher->publish($task);
-
     }
+
     /**
      * Test to check if disabled publisher do not publish.
      */

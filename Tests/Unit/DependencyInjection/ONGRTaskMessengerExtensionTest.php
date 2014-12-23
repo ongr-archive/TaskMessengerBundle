@@ -25,7 +25,7 @@ class ONGRTaskMessengerExtensionTest extends \PHPUnit_Framework_TestCase
 
         // Case #0 simple configuration test.
         $out[] = [
-            'ongr_task_messenger.sync_task_complete_listener'
+            'ongr_task_messenger.sync_task_complete_listener',
         ];
 
         return $out;

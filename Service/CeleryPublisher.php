@@ -108,7 +108,7 @@ class CeleryPublisher implements TaskPublisherInterface, LoggerAwareInterface
                                 $task->getArguments()
                             )
                         ),
-                    ]
+                    ],
                 ]
             );
 
