@@ -9,13 +9,13 @@
  * file that was distributed with this source code.
  */
 
-namespace ONGR\TaskMessengerBundle;
-
-use Symfony\Component\HttpKernel\Bundle\Bundle;
+namespace ONGR\TaskMessengerBundle\Service\Exception;
 
 /**
- * ONGR Taskmessenger bundle system file required by kernel.
+ * Exception thrown on various AMQP failures.
+ *
+ * Depend on this exception type instead of explicitly on AMQP exceptions
  */
-class ONGRTaskMessengerBundle extends Bundle
+class PublisherConnectionException extends \RuntimeException
 {
 }
