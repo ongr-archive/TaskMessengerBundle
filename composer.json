@@ -1,5 +1,5 @@
 {
-    "name": "ongr/taskmessenger-bundle",
+    "name": "ongr/task-messenger-bundle",
     "description": "Handles ONGR sync tasks schedule",
     "type": "symfony-bundle",
     "homepage": "http://ongr.io",
