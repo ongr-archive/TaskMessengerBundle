@@ -14,6 +14,7 @@ namespace ONGR\TaskMessengerBundle\DependencyInjection;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
+use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 /**
@@ -31,5 +32,14 @@ class ONGRTaskMessengerExtension extends Extension
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yml');
+
+        $taskPublisher = $container->findDefinition('ongr_task_messenger.task_publisher');
+        $taggedPublishers = $container->findTaggedServiceIds('ongr_task_messenger.task_publisher');
+        foreach ($taggedPublishers as $id => $tags) {
+            $taskPublisher->addMethodCall(
+                'addPublisher',
+                [new Reference($id)]
+            );
+        }
     }
 }

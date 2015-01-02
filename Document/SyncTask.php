@@ -43,12 +43,12 @@ class SyncTask
     /**
      * @var string
      */
-    protected $amqpType;
+    protected $publishingType;
 
     /**
      * @var string
      */
-    protected $amqpHost;
+    protected $host;
 
     /**
      * @var string
@@ -69,16 +69,16 @@ class SyncTask
 
         switch ($type) {
             case self::SYNC_TASK_BROADCAST:
-                $this->setAmqpType('fanout');
-                $this->setAmqpHost('');
+                $this->setPublishingType('fanout');
+                $this->setHost('');
                 break;
             case self::SYNC_TASK_ROUNDROBIN:
-                $this->setAmqpType('direct');
-                $this->setAmqpHost('');
+                $this->setPublishingType('direct');
+                $this->setHost('');
                 break;
             case self::SYNC_TASK_PRESERVEHOST:
-                $this->setAmqpType('direct');
-                $this->setAmqpHost(explode('.', gethostname())[0]);
+                $this->setPublishingType('direct');
+                $this->setHost(explode('.', gethostname())[0]);
                 break;
         }
     }
@@ -89,7 +89,7 @@ class SyncTask
     public function getId()
     {
         if ($this->id === null) {
-            $this->id = md5(uniqid($this->getAmqpHost()));
+            $this->id = md5(uniqid($this->getHost()));
         }
 
         return $this->id;
@@ -106,17 +106,17 @@ class SyncTask
     /**
      * @return string
      */
-    public function getAmqpHost()
+    public function getHost()
     {
-        return $this->amqpHost;
+        return $this->host;
     }
 
     /**
-     * @param string $amqpHost
+     * @param string $host
      */
-    public function setAmqpHost($amqpHost)
+    public function setHost($host)
     {
-        $this->amqpHost = $amqpHost;
+        $this->host = $host;
     }
 
     /**
@@ -234,17 +234,17 @@ class SyncTask
     /**
      * @return string
      */
-    public function getAmqpType()
+    public function getPublishingType()
     {
-        return $this->amqpType;
+        return $this->publishingType;
     }
 
     /**
-     * @param string $amqpType
+     * @param string $publishingType
      */
-    public function setAmqpType($amqpType)
+    public function setPublishingType($publishingType)
     {
-        $this->amqpType = $amqpType;
+        $this->publishingType = $publishingType;
     }
 
     /**

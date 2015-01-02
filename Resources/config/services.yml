@@ -5,36 +5,64 @@ parameters:
     ongr_task_messenger.amqp_connection.user: guest
     ongr_task_messenger.amqp_connection.password: guest
 
-    ongr_task_messenger.amqp_connection_factory.class: ONGR\TaskMessengerBundle\Service\ConnectionFactory
+    ongr_task_messenger.beanstalkd_connection.class: Pheanstalk\Pheanstalk
+    ongr_task_messenger.beanstalkd_connection.host: localhost
+    ongr_task_messenger.beanstalkd_connection.port: 11300
 
-    ongr_task_messenger.task_publisher.class: ONGR\TaskMessengerBundle\Service\CeleryPublisher
-    ongr_task_messenger.task_publisher.enabled: true
+    ongr_task_messenger.connection_factory.class: ONGR\TaskMessengerBundle\Publishers\ConnectionFactory
+    ongr_task_messenger.task_publisher.class: ONGR\TaskMessengerBundle\Service\TaskPublisher
+
+    ongr_task_messenger.task_publisher.amqp.class: ONGR\TaskMessengerBundle\Publishers\AMQPPublisher
+    ongr_task_messenger.task_publisher.amqp.enabled: true
+    ongr_task_messenger.task_publisher.beanstalkd.class: ONGR\TaskMessengerBundle\Publishers\BeanstalkdPublisher
+    ongr_task_messenger.task_publisher.beanstalkd.enabled: true
 
     ongr_task_messenger.sync_task_complete_listener.class: ONGR\TaskMessengerBundle\Service\SyncTasksListener
 
+    ongr_task_messenger.logger.class: Symfony\Component\HttpKernel\Log\NullLogger
+
 services:
+    ongr_task_messenger.task_publisher:
+        class: %ongr_task_messenger.task_publisher.class%
+
     ongr_task_messenger.amqp_connection_factory:
-        class: %ongr_task_messenger.amqp_connection_factory.class%
+        class: %ongr_task_messenger.connection_factory.class%
         arguments:
             - %ongr_task_messenger.amqp_connection.class%
             - %ongr_task_messenger.amqp_connection.host%
             - %ongr_task_messenger.amqp_connection.port%
             - %ongr_task_messenger.amqp_connection.user%
             - %ongr_task_messenger.amqp_connection.password%
-
-    ongr_task_messenger.task_publisher:
-        class: %ongr_task_messenger.task_publisher.class%
+    ongr_task_messenger.task_publisher.amqp:
+        class: %ongr_task_messenger.task_publisher.amqp.class%
         arguments:
             - @ongr_task_messenger.amqp_connection_factory
             - %kernel.environment%
-        cals:
+        calls:
             - [setLogger, [@ongr_task_messenger_logger]]
-            - [setEnabled, [%ongr_task_messenger.task_publisher.enabled%]]
+            - [setEnabled, [%ongr_task_messenger.task_publisher.amqp.enabled%]]
+        tags:
+            - { name: ongr_task_messenger.task_publisher }
+
+    ongr_task_messenger.beanstalkd_connection_factory:
+        class: %ongr_task_messenger.connection_factory.class%
+        arguments:
+            - %ongr_task_messenger.beanstalkd_connection.class%
+            - %ongr_task_messenger.beanstalkd_connection.host%
+            - %ongr_task_messenger.beanstalkd_connection.port%
+    ongr_task_messenger.task_publisher.beanstalkd:
+        class: %ongr_task_messenger.task_publisher.beanstalkd.class%
+        arguments:
+            - @ongr_task_messenger.beanstalkd_connection_factory
+            - %kernel.environment%
+        calls:
+            - [setLogger, [@ongr_task_messenger_logger]]
+            - [setEnabled, [%ongr_task_messenger.task_publisher.beanstalkd.enabled%]]
+        tags:
+            - { name: ongr_task_messenger.task_publisher }
 
     ongr_task_messenger.sync_task_complete_listener:
         class: %ongr_task_messenger.sync_task_complete_listener.class%
-        arguments:
-            - @ongr_task_messenger.task_publisher
         tags:
             - { name: kernel.event_listener, event: ongr_connections.sync_task_complete, method: handleEvent }
 
