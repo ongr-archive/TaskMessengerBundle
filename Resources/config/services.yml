@@ -1,12 +1,12 @@
 parameters:
     ongr_task_messenger.amqp_connection.class: PhpAmqpLib\Connection\AMQPConnection
-    ongr_task_messenger.amqp_connection.host: localhost
+    ongr_task_messenger.amqp_connection.host: 127.0.0.1
     ongr_task_messenger.amqp_connection.port: 5672
     ongr_task_messenger.amqp_connection.user: guest
     ongr_task_messenger.amqp_connection.password: guest
 
     ongr_task_messenger.beanstalkd_connection.class: Pheanstalk\Pheanstalk
-    ongr_task_messenger.beanstalkd_connection.host: localhost
+    ongr_task_messenger.beanstalkd_connection.host: 127.0.0.1
     ongr_task_messenger.beanstalkd_connection.port: 11300
 
     ongr_task_messenger.connection_factory.class: ONGR\TaskMessengerBundle\Publishers\ConnectionFactory
@@ -20,7 +20,6 @@ parameters:
     ongr_task_messenger.sync_task_complete_listener.class: ONGR\TaskMessengerBundle\Service\SyncTasksListener
 
     ongr_task_messenger.logger.class: Symfony\Component\HttpKernel\Log\NullLogger
-
 services:
     ongr_task_messenger.task_publisher:
         class: %ongr_task_messenger.task_publisher.class%

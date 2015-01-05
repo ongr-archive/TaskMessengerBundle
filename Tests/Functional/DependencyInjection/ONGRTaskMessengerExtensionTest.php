@@ -20,7 +20,24 @@ class ONGRTaskMessengerExtensionTest extends WebTestCase
      */
     public function testTaggedServices()
     {
-        $container = self::createClient()->getContainer();
+        $container = $this->getContainer();
         $this->assertTrue($container->has('ongr_task_messenger.task_publisher'));
+
+        $this->assertTrue($container->has('ongr_task_messenger.task_publisher.amqp'));
+        $this->assertTrue($container->has('ongr_task_messenger.task_publisher.beanstalkd'));
+
+        $taskPublisher = $container->get('ongr_task_messenger.task_publisher');
+
+        $this->assertEquals(2, count($taskPublisher->getPublishers()), 'There should be 2 publishers configured.');
+    }
+
+    /**
+     * @return \Symfony\Component\DependencyInjection\ContainerInterface
+     */
+    protected function getContainer()
+    {
+        $container = self::createClient()->getContainer();
+
+        return $container;
     }
 }

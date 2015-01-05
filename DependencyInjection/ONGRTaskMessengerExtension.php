@@ -33,6 +33,22 @@ class ONGRTaskMessengerExtension extends Extension
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yml');
 
+        if (isset($config['publishers'])) {
+            foreach ($config['publishers'] as $publisher => $parameters) {
+                foreach ($parameters as $key => $value) {
+                    if ($key === 'enabled') {
+                        $paramString = 'ongr_task_messenger.task_publisher.%s.%s';
+                    } else {
+                        $paramString = 'ongr_task_messenger.%s_connection.%s';
+                    }
+                    $parameter = sprintf($paramString, $publisher, $key);
+                    if ($container->hasParameter($parameter)) {
+                        $container->setParameter($parameter, $value);
+                    }
+                }
+            }
+        }
+
         $taskPublisher = $container->findDefinition('ongr_task_messenger.task_publisher');
         $taggedPublishers = $container->findTaggedServiceIds('ongr_task_messenger.task_publisher');
         foreach ($taggedPublishers as $id => $tags) {

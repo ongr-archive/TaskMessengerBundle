@@ -51,3 +51,17 @@ doctrine:
     orm:
         auto_generate_proxy_classes: %kernel.debug%
         auto_mapping: true
+ongr_task_messenger:
+    publishers:
+        amqp:
+            enabled: true
+            class: PhpAmqpLib\Connection\AMQPConnection
+            host: 127.0.0.1
+            port: 5672
+            user: guest
+            password: guest
+        beanstalkd:
+            enabled: true
+            class: Pheanstalk\Pheanstalk
+            host: 127.0.0.1
+            port: 11300
