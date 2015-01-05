@@ -25,8 +25,8 @@ class SyncTaskTest extends \PHPUnit_Framework_TestCase
             ['name', 'push'],
             ['arguments', [1, 2]],
             ['environment', 'environment'],
-            ['amqpType', 'amqpType'],
-            ['amqpHost', 'amqpHost'],
+            ['publishingType', 'publishingType'],
+            ['host', 'host'],
             ['command', 'command'],
             ['exchange', 'foo'],
         ];

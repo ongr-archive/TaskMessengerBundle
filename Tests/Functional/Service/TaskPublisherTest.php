@@ -13,18 +13,16 @@ namespace ONGR\TaskMessengerBundle\Tests\Functional\Service;
 
 use ONGR\TaskMessengerBundle\Document\SyncTask;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\HttpKernel\Log\NullLogger;
 
-class CeleryPublisherTest extends WebTestCase
+class TaskPublisherTest extends WebTestCase
 {
     /**
-     * Dummy test for verifying that integration with AMQP broker does not fail.
+     * Dummy test for verifying that TaskPublisher works with configured brokers.
      */
     public function testPublish()
     {
         $client = self::createClient();
         $publisher = $client->getContainer()->get('ongr_task_messenger.task_publisher');
-        $publisher->setLogger(new NullLogger());
 
         $task = new SyncTask(SyncTask::SYNC_TASK_PRESERVEHOST);
         $task->setName('task_foo');

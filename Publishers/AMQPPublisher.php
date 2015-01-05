@@ -9,53 +9,18 @@
  * file that was distributed with this source code.
  */
 
-namespace ONGR\TaskMessengerBundle\Service;
+namespace ONGR\TaskMessengerBundle\Publishers;
 
 use ONGR\TaskMessengerBundle\Document\SyncTask;
-use ONGR\TaskMessengerBundle\Service\Exception\PublisherConnectionException;
-use PhpAmqpLib\Connection\AMQPConnection;
+use ONGR\TaskMessengerBundle\Publishers\Exception\PublisherConnectionException;
 use PhpAmqpLib\Exception\AMQPExceptionInterface;
 use PhpAmqpLib\Message\AMQPMessage;
-use Psr\Log\LoggerAwareInterface;
-use Psr\Log\LoggerAwareTrait;
 
 /**
- * Celery publisher implementation.
+ * AMQP publisher implementation.
  */
-class CeleryPublisher implements TaskPublisherInterface, LoggerAwareInterface
+class AMQPPublisher extends TaskPublisherAbstract
 {
-    use LoggerAwareTrait;
-
-    /**
-     * @var AMQPConnection
-     */
-    protected $connection;
-
-    /**
-     * @var ConnectionFactory
-     */
-    protected $connectionFactory;
-
-    /**
-     * @var string
-     */
-    protected $environment;
-
-    /**
-     * @var bool
-     */
-    protected $enabled = true;
-
-    /**
-     * @param AMQPConnection $connectionFactory
-     * @param string         $environment
-     */
-    public function __construct($connectionFactory, $environment)
-    {
-        $this->environment = $environment;
-        $this->connectionFactory = $connectionFactory;
-    }
-
     /**
      * Publish message to AMQP.
      *
@@ -90,7 +55,7 @@ class CeleryPublisher implements TaskPublisherInterface, LoggerAwareInterface
         $channel = $this->connection->channel();
 
         if ($channel) {
-            $channel->exchange_declare($task->getExchange(), $task->getAmqpType(), false, true, false);
+            $channel->exchange_declare($task->getExchange(), $task->getPublishingType(), false, true, false);
 
             $content = json_encode(
                 [
@@ -121,35 +86,11 @@ class CeleryPublisher implements TaskPublisherInterface, LoggerAwareInterface
 
             $this->logger && $this->logger->info(
                 'amqp publish',
-                [$task->getName(), $task->getAmqpType(), $task->getAmqpHost()]
+                [$task->getName(), $task->getPublishingType(), $task->getHost()]
             );
 
-            $channel->basic_publish($message, $task->getExchange(), $task->getAmqpHost());
+            $channel->basic_publish($message, $task->getExchange(), $task->getHost());
             $channel->close();
         }
-    }
-
-    /**
-     * @param SyncTask $task
-     *
-     * @return string
-     */
-    protected function getEnvironment($task)
-    {
-        $environment = $this->environment;
-
-        if (strlen($task->getEnvironment()) > 0) {
-            $environment = $task->getEnvironment();
-        }
-
-        return $environment;
-    }
-
-    /**
-     * @param bool $enabled
-     */
-    public function setEnabled($enabled = true)
-    {
-        $this->enabled = $enabled;
     }
 }

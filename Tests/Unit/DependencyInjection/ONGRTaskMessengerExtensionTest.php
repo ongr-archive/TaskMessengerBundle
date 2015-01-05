@@ -40,11 +40,113 @@ class ONGRTaskMessengerExtensionTest extends \PHPUnit_Framework_TestCase
      */
     public function testDefinitions($definition)
     {
-        $container = new ContainerBuilder();
+        $container = $this->getContainer();
 
         $extension = new ONGRTaskMessengerExtension();
         $extension->load([], $container);
 
         $this->assertTrue($container->hasDefinition($definition));
+    }
+
+    /**
+     * Test if publishers where added to task publisher service.
+     */
+    public function testTaggedServices()
+    {
+        $container = $this->getContainer();
+
+        $extension = new ONGRTaskMessengerExtension();
+        $extension->load([], $container);
+
+        $taskPublisher = $container->findDefinition('ongr_task_messenger.task_publisher');
+        $this->assertTrue($taskPublisher->hasMethodCall('addPublisher'));
+    }
+
+    /**
+     * @return ContainerBuilder
+     */
+    protected function getContainer()
+    {
+        $container = new ContainerBuilder();
+
+        return $container;
+    }
+
+    /**
+     * Tests if right parameters are set.
+     *
+     * @param array $config
+     * @param array $param
+     * @param array $expected
+     *
+     * @dataProvider getTestParamsData
+     */
+    public function testPublishersParameters($config, $param, $expected)
+    {
+        $container = $this->getContainer();
+
+        $extension = new ONGRTaskMessengerExtension();
+        $extension->load($config, $container);
+
+        $this->assertTrue($container->hasParameter($param), 'Expected parameter does not exist.');
+        $this->assertEquals($expected, $container->getParameter($param), 'Parameter has been set with wrong value.');
+    }
+
+    /**
+     * @return array
+     */
+    public function getTestParamsData()
+    {
+        $customConfig = $this->getPublishersConfigurationData();
+        $customConfig = array_replace_recursive(
+            $customConfig,
+            [
+                [
+                    'publishers' => [
+                        'amqp' => [
+                            'class' => 'Foo\Bar\AMQPLib',
+                        ],
+                    ],
+                ],
+            ]
+        );
+
+        return [
+            [
+                [],
+                'ongr_task_messenger.amqp_connection.class',
+                'PhpAmqpLib\Connection\AMQPConnection',
+            ],
+            [
+                $customConfig,
+                'ongr_task_messenger.amqp_connection.class',
+                'Foo\Bar\AMQPLib',
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function getPublishersConfigurationData()
+    {
+        return [
+            [
+                'publishers' => [
+                    'amqp' => [
+                        'class' => 'PhpAmqpLib\Connection\AMQPConnection',
+                        'host' => '127.0.0.1',
+                        'port' => 5672,
+                        'user' => 'guest',
+                        'password' => 'guest',
+                    ],
+                    'beanstalkd' => [
+                        'class' => 'Pheanstalk\Pheanstalk',
+                        'host' => '127.0.0.1',
+                        'port' => 11300,
+                    ],
+                ],
+            ],
+        ];
     }
 }

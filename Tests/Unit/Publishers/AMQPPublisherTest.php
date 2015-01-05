@@ -9,12 +9,13 @@
  * file that was distributed with this source code.
  */
 
-namespace ONGR\TaskMessengerBundle\Tests\Unit\Service;
+namespace ONGR\TaskMessengerBundle\Tests\Unit\Publishers;
 
 use ONGR\TaskMessengerBundle\Document\SyncTask;
-use ONGR\TaskMessengerBundle\Service\CeleryPublisher;
+use ONGR\TaskMessengerBundle\Publishers\AMQPPublisher;
+use Psr\Log\LoggerInterface;
 
-class CeleryPublisherTest extends \PHPUnit_Framework_TestCase
+class AMQPPublisherTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Data provider for testMethodExists.
@@ -54,20 +55,20 @@ class CeleryPublisherTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Helper method to get CeleryPublisher object.
+     * Helper method to get AMQPPublisher object.
      *
-     * @return CeleryPublisher
+     * @return AMQPPublisher
      */
     protected function getPublisher()
     {
-        $connectionFactory = $this->getMockBuilder('ONGR\TaskMessengerBundle\Service\ConnectionFactory')
+        $connectionFactory = $this->getMockBuilder('ONGR\TaskMessengerBundle\Publishers\ConnectionFactory')
             ->disableOriginalConstructor()
             ->getMock();
         $environment = 'dummy-environment';
 
-        $celeryPublisher = new CeleryPublisher($connectionFactory, $environment);
+        $amqpPublisher = new AMQPPublisher($connectionFactory, $environment);
 
-        return $celeryPublisher;
+        return $amqpPublisher;
     }
 
     /**
@@ -75,13 +76,13 @@ class CeleryPublisherTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetEnvironment()
     {
-        $connectionFactory = $this->getMockBuilder('ONGR\TaskMessengerBundle\Service\ConnectionFactory')
+        $connectionFactory = $this->getMockBuilder('ONGR\TaskMessengerBundle\Publishers\ConnectionFactory')
             ->disableOriginalConstructor()
             ->getMock();
 
         $environment = 'dummy-environment';
 
-        $publisher = new CeleryPublisher($connectionFactory, $environment);
+        $publisher = new AMQPPublisher($connectionFactory, $environment);
 
         $task = new SyncTask(SyncTask::SYNC_TASK_BROADCAST);
         $task->setName('ongr:sync:download');
@@ -96,7 +97,7 @@ class CeleryPublisherTest extends \PHPUnit_Framework_TestCase
     /**
      * Tests AMQP connection factory exception handling.
      *
-     * @expectedException \ONGR\TaskMessengerBundle\Service\Exception\PublisherConnectionException
+     * @expectedException \ONGR\TaskMessengerBundle\Publishers\Exception\PublisherConnectionException
      */
     public function testConnectionFactoryException()
     {
@@ -104,7 +105,7 @@ class CeleryPublisherTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $connectionFactory = $this->getMockBuilder('ONGR\TaskMessengerBundle\Service\ConnectionFactory')
+        $connectionFactory = $this->getMockBuilder('ONGR\TaskMessengerBundle\Publishers\ConnectionFactory')
             ->disableOriginalConstructor()
             ->getMock();
         $connectionFactory
@@ -114,7 +115,7 @@ class CeleryPublisherTest extends \PHPUnit_Framework_TestCase
 
         $environment = 'dummy-environment';
 
-        $publisher = new CeleryPublisher($connectionFactory, $environment);
+        $publisher = new AMQPPublisher($connectionFactory, $environment);
 
         $task = new SyncTask(SyncTask::SYNC_TASK_BROADCAST);
         $task->setName('ongr:sync:download');
@@ -129,7 +130,7 @@ class CeleryPublisherTest extends \PHPUnit_Framework_TestCase
      */
     public function testDisabledPublisher()
     {
-        $publisher = $this->getMockBuilder('ONGR\TaskMessengerBundle\Service\CeleryPublisher')
+        $publisher = $this->getMockBuilder('ONGR\TaskMessengerBundle\Publishers\AMQPPublisher')
             ->disableOriginalConstructor()
             ->setMethods(null)
             ->getMock();
@@ -156,5 +157,53 @@ class CeleryPublisherTest extends \PHPUnit_Framework_TestCase
         $method->setAccessible(true);
 
         return $method;
+    }
+
+    /**
+     * Test to check if logging is working as expected.
+     */
+    public function testLogging()
+    {
+        $channelMock = $this
+            ->getMockBuilder('\PhpAmqpLib\Channel\AMQPChannel')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $amqpConnection = $this->getMockBuilder('PhpAmqpLib\Connection\AMQPConnection')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $amqpConnection->expects($this->once())->method('channel')->willReturn($channelMock);
+
+        $connectionFactory = $this->getMockBuilder('ONGR\TaskMessengerBundle\Publishers\ConnectionFactory')
+            ->disableOriginalConstructor()
+            ->setMethods(['create'])
+            ->getMock();
+        $connectionFactory->expects($this->once())->method('create')->willReturn($amqpConnection);
+        $environment = 'dummy-environment';
+
+        $publisher = new AMQPPublisher($connectionFactory, $environment);
+
+        $task = new SyncTask(SyncTask::SYNC_TASK_BROADCAST);
+        $task->setName('ongr:sync:download');
+        $task->setCommand('ongr:sync:download');
+        $publisher->setLogger($this->getLoggerMock('amqp publish', ['ongr:sync:download', 'fanout', '']));
+
+        $publisher->publish($task);
+    }
+
+    /**
+     * Logger mock to test if it gets logged correctly.
+     *
+     * @param string $text
+     * @param array  $context
+     *
+     * @return LoggerInterface
+     */
+    public function getLoggerMock($text, $context)
+    {
+        $loggerMock = $this->getMock('Psr\Log\LoggerInterface');
+        $loggerMock->expects($this->exactly(1))->method('info')->with($text, $context);
+
+        return $loggerMock;
     }
 }

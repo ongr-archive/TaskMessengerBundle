@@ -9,14 +9,12 @@
  * file that was distributed with this source code.
  */
 
-namespace ONGR\TaskMessengerBundle\Service;
-
-use PhpAmqpLib\Connection\AMQPConnection;
+namespace ONGR\TaskMessengerBundle\Publishers;
 
 /**
- * Instantiates AMQP connection object.
+ * Instantiates connection object.
  *
- * Factory is needed because if AMQP broker is down or not available, exception is thrown in a connection object
+ * Factory is needed because if broker is down or not available, exception is thrown in a connection object
  * constructor. If connection is a service itself, whole container fails upon creation time.
  *
  * Connection service also cannot be a lazy service, because PHPUnit is calling __destruct on all services afterwards,
@@ -56,7 +54,7 @@ class ConnectionFactory
      * @param string $user
      * @param string $password
      */
-    public function __construct($class, $host, $port, $user, $password)
+    public function __construct($class, $host, $port, $user = null, $password = null)
     {
         $this->class = $class;
         $this->host = $host;
@@ -66,9 +64,9 @@ class ConnectionFactory
     }
 
     /**
-     * Creates AMQP connection.
+     * Creates publisher connection.
      *
-     * @return AMQPConnection
+     * @return object
      */
     public function create()
     {

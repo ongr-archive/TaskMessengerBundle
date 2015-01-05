@@ -9,12 +9,10 @@
  * file that was distributed with this source code.
  */
 
-namespace ONGR\TaskMessengerBundle\Service\Exception;
+namespace ONGR\TaskMessengerBundle\Publishers\Exception;
 
 /**
- * Exception thrown on various AMQP failures.
- *
- * Depend on this exception type instead of explicitly on AMQP exceptions
+ * Exception thrown on various connection failures.
  */
 class PublisherConnectionException extends \RuntimeException
 {
