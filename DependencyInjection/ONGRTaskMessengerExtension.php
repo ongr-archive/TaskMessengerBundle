@@ -40,11 +40,11 @@ class ONGRTaskMessengerExtension extends Extension
                     if ($container->hasParameter($parameter)) {
                         $container->setParameter($parameter, $value);
                     }
-                    $container->setParameter(
-                        sprintf('ongr_task_messenger.task_publisher.%s.enabled', $publisher),
-                        true
-                    );
                 }
+                $container->setParameter(
+                    sprintf('ongr_task_messenger.task_publisher.%s.enabled', $publisher),
+                    true
+                );
             }
         }
 

@@ -101,7 +101,7 @@ class ONGRTaskMessengerExtensionTest extends \PHPUnit_Framework_TestCase
         $customConfig = array_replace_recursive(
             $customConfig,
             [
-                'ongr_task_messenger' => [
+                [
                     'publishers' => [
                         'amqp' => [
                             'class' => 'Foo\Bar\AMQPLib',

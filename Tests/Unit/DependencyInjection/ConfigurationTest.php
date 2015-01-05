@@ -42,7 +42,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
             ],
         ];
 
-        // Case #1 Test default values.
+        // Case #0 Test default values.
         $out[] = [
             [
                 'publishers' => [
@@ -50,20 +50,27 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                     'beanstalkd' => [],
                 ],
             ],
-            $expectedConfiguration,
+            [
+                'publishers' => [
+                    'amqp' => [],
+                    'beanstalkd' => [],
+                ],
+            ],
         ];
 
-        // Case #2 Test merged configuration values.
+        // Case #1 Test merged configuration values.
         $out[] = [
             [
                 'publishers' => [
                     'amqp' => [
+                        'class' => 'PhpAmqpLib\Connection\AMQPConnection',
                         'host' => 'localhost',
                         'port' => 5672,
                         'user' => 'guest',
                         'password' => 'guest',
                     ],
                     'beanstalkd' => [
+                        'class' => 'Foo\Bar\Beanstalkd',
                         'host' => '127.0.0.1',
                         'port' => 11300,
                     ],
@@ -74,6 +81,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                 [
                     'publishers' => [
                         'amqp' => ['host' => 'localhost'],
+                        'beanstalkd' => ['class' => 'Foo\Bar\Beanstalkd'],
                     ],
                 ]
             ),
