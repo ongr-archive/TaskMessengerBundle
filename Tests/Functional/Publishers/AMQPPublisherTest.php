@@ -12,24 +12,85 @@
 namespace ONGR\TaskMessengerBundle\Tests\Functional\Publishers;
 
 use ONGR\TaskMessengerBundle\Document\SyncTask;
+use PhpAmqpLib\Channel\AMQPChannel;
+use PhpAmqpLib\Connection\AMQPConnection;
+use PhpAmqpLib\Message\AMQPMessage;
 use Psr\Log\NullLogger;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class AMQPPublisherTest extends WebTestCase
 {
     /**
+     * @var AMQPChannel
+     */
+    protected $channel;
+
+    /**
+     * Set up AMQP connection.
+     */
+    public function setUp()
+    {
+        $container = $this->getContainer();
+        $exchangeName = 'general';
+
+        $connection = new AMQPConnection(
+            $container->getParameter('ongr_task_messenger.amqp_connection.host'),
+            $container->getParameter('ongr_task_messenger.amqp_connection.port'),
+            $container->getParameter('ongr_task_messenger.amqp_connection.user'),
+            $container->getParameter('ongr_task_messenger.amqp_connection.password')
+        );
+
+        $this->channel = $connection->channel();
+        list($queueName, ,) = $this->channel->queue_declare();
+        $this->channel->queue_bind($queueName, $exchangeName, 'foxtestvm');
+
+        $this->channel->basic_consume(
+            $queueName,
+            getmypid(),
+            false,
+            true,
+            true,
+            true,
+            [$this, 'verifyMessage']
+        );
+    }
+
+    /**
      * Test if AMQPPublisher works as expected.
      */
     public function testLogging()
     {
-        $client = self::createClient();
+        $container = $this->getContainer();
 
-        $publisher = $client->getContainer()->get('ongr_task_messenger.task_publisher.amqp');
+        $publisher = $container->get('ongr_task_messenger.task_publisher.amqp');
         $logger = new NullLogger();
         $publisher->setLogger($logger);
         $task = new SyncTask(SyncTask::SYNC_TASK_PRESERVEHOST);
         $task->setName('task_foo');
         $task->setCommand('command_foo');
         $publisher->publish($task);
+
+        $this->channel->wait();
+    }
+
+    /**
+     * Test if correct AMQP message is returned.
+     *
+     * @param AMQPMessage $message
+     */
+    public function verifyMessage($message)
+    {
+        $body = json_decode($message->body, true);
+
+        $this->assertEquals($body['task'], 'ongr.task.task_foo');
+        $this->assertEquals($body['args'][0], 'command_foo -e test');
+    }
+
+    /**
+     * @return \Symfony\Component\DependencyInjection\ContainerInterface
+     */
+    public function getContainer()
+    {
+        return self::createClient()->getContainer();
     }
 }
