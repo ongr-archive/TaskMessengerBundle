@@ -104,7 +104,6 @@ class ONGRTaskMessengerExtensionTest extends \PHPUnit_Framework_TestCase
                 'ongr_task_messenger' => [
                     'publishers' => [
                         'amqp' => [
-                            'enabled' => false,
                             'class' => 'Foo\Bar\AMQPLib',
                         ],
                     ],
@@ -123,11 +122,6 @@ class ONGRTaskMessengerExtensionTest extends \PHPUnit_Framework_TestCase
                 'ongr_task_messenger.amqp_connection.class',
                 'Foo\Bar\AMQPLib',
             ],
-            [
-                $customConfig,
-                'ongr_task_messenger.task_publisher.amqp.enabled',
-                false,
-            ],
         ];
     }
 
@@ -140,7 +134,6 @@ class ONGRTaskMessengerExtensionTest extends \PHPUnit_Framework_TestCase
             [
                 'publishers' => [
                     'amqp' => [
-                        'enabled' => true,
                         'class' => 'PhpAmqpLib\Connection\AMQPConnection',
                         'host' => '127.0.0.1',
                         'port' => 5672,
@@ -148,7 +141,6 @@ class ONGRTaskMessengerExtensionTest extends \PHPUnit_Framework_TestCase
                         'password' => 'guest',
                     ],
                     'beanstalkd' => [
-                        'enabled' => true,
                         'class' => 'Pheanstalk\Pheanstalk',
                         'host' => '127.0.0.1',
                         'port' => 11300,

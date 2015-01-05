@@ -36,15 +36,14 @@ class ONGRTaskMessengerExtension extends Extension
         if (isset($config['publishers'])) {
             foreach ($config['publishers'] as $publisher => $parameters) {
                 foreach ($parameters as $key => $value) {
-                    if ($key === 'enabled') {
-                        $paramString = 'ongr_task_messenger.task_publisher.%s.%s';
-                    } else {
-                        $paramString = 'ongr_task_messenger.%s_connection.%s';
-                    }
-                    $parameter = sprintf($paramString, $publisher, $key);
+                    $parameter = sprintf('ongr_task_messenger.%s_connection.%s', $publisher, $key);
                     if ($container->hasParameter($parameter)) {
                         $container->setParameter($parameter, $value);
                     }
+                    $container->setParameter(
+                        sprintf('ongr_task_messenger.task_publisher.%s.enabled', $publisher),
+                        true
+                    );
                 }
             }
         }

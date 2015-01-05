@@ -13,9 +13,9 @@ parameters:
     ongr_task_messenger.task_publisher.class: ONGR\TaskMessengerBundle\Service\TaskPublisher
 
     ongr_task_messenger.task_publisher.amqp.class: ONGR\TaskMessengerBundle\Publishers\AMQPPublisher
-    ongr_task_messenger.task_publisher.amqp.enabled: true
+    ongr_task_messenger.task_publisher.amqp.enabled: false
     ongr_task_messenger.task_publisher.beanstalkd.class: ONGR\TaskMessengerBundle\Publishers\BeanstalkdPublisher
-    ongr_task_messenger.task_publisher.beanstalkd.enabled: true
+    ongr_task_messenger.task_publisher.beanstalkd.enabled: false
 
     ongr_task_messenger.sync_task_complete_listener.class: ONGR\TaskMessengerBundle\Service\SyncTasksListener
 

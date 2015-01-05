@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace ONGR\TaskMessengerBundle\Tests\DependencyInjection;
+namespace ONGR\TaskMessengerBundle\Tests\Unit\DependencyInjection;
 
 use ONGR\TaskMessengerBundle\DependencyInjection\Configuration;
 use Symfony\Component\Config\Definition\Processor;
@@ -28,7 +28,6 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $expectedConfiguration = [
             'publishers' => [
                 'amqp' => [
-                    'enabled' => true,
                     'class' => 'PhpAmqpLib\Connection\AMQPConnection',
                     'host' => '127.0.0.1',
                     'port' => 5672,
@@ -36,7 +35,6 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                     'password' => 'guest',
                 ],
                 'beanstalkd' => [
-                    'enabled' => true,
                     'class' => 'Pheanstalk\Pheanstalk',
                     'host' => '127.0.0.1',
                     'port' => 11300,
@@ -60,14 +58,12 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
             [
                 'publishers' => [
                     'amqp' => [
-                        'enabled' => false,
-                        'host' => '127.0.0.1',
+                        'host' => 'localhost',
                         'port' => 5672,
                         'user' => 'guest',
                         'password' => 'guest',
                     ],
                     'beanstalkd' => [
-                        'enabled' => true,
                         'host' => '127.0.0.1',
                         'port' => 11300,
                     ],
@@ -77,7 +73,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                 $expectedConfiguration,
                 [
                     'publishers' => [
-                        'amqp' => ['enabled' => false],
+                        'amqp' => ['host' => 'localhost'],
                     ],
                 ]
             ),
