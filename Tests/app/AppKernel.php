@@ -25,6 +25,7 @@ class AppKernel extends Kernel
             new \ONGR\ElasticsearchBundle\ONGRElasticsearchBundle(),
             new \Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
             new \ONGR\ConnectionsBundle\ONGRConnectionsBundle(),
+            new ONGR\TaskMessengerBundle\Tests\app\fixture\Acme\TestBundle\AcmeTestBundle(),
             new \ONGR\TaskMessengerBundle\ONGRTaskMessengerBundle(),
         );
     }
