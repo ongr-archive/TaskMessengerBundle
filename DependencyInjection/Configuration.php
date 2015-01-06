@@ -11,12 +11,10 @@
 
 namespace ONGR\TaskMessengerBundle\DependencyInjection;
 
-use Symfony\Component\Config\Definition\ArrayNode;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
-use Symfony\Component\Config\Definition\PrototypedArrayNode;
 
 /**
  * This is the class that validates and merges configuration from app/config files.
