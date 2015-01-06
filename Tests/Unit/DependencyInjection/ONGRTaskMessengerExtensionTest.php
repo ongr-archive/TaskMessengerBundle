@@ -13,6 +13,7 @@ namespace ONGR\TaskMessengerBundle\Tests\Unit\DependencyInjection;
 
 use ONGR\TaskMessengerBundle\DependencyInjection\ONGRTaskMessengerExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 
 class ONGRTaskMessengerExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -23,9 +24,25 @@ class ONGRTaskMessengerExtensionTest extends \PHPUnit_Framework_TestCase
     {
         $out = [];
 
-        // Case #0 simple configuration test.
+        // Case #0 Check task listener service.
         $out[] = [
             'ongr_task_messenger.sync_task_complete_listener',
+        ];
+        // Case #1 Check task publisher service.
+        $out[] = [
+            'ongr_task_messenger.task_publisher.default',
+        ];
+        // Case #2 Check second task publisher service.
+        $out[] = [
+            'ongr_task_messenger.task_publisher.custom',
+        ];
+        // Case #3 Check AMQP service.
+        $out[] = [
+            'ongr_task_messenger.publisher.default.amqp',
+        ];
+        // Case #4 Check custom AMQP service.
+        $out[] = [
+            'ongr_task_messenger.publisher.custom.custom',
         ];
 
         return $out;
@@ -43,22 +60,38 @@ class ONGRTaskMessengerExtensionTest extends \PHPUnit_Framework_TestCase
         $container = $this->getContainer();
 
         $extension = new ONGRTaskMessengerExtension();
-        $extension->load([], $container);
+        $extension->load($this->getPublishersConfigurationData(), $container);
 
         $this->assertTrue($container->hasDefinition($definition));
     }
 
     /**
-     * Test if publishers where added to task publisher service.
+     * Test if publisher where added to default task publisher service.
      */
-    public function testTaggedServices()
+    public function testTaskPublisherPublishers()
     {
         $container = $this->getContainer();
 
-        $extension = new ONGRTaskMessengerExtension();
-        $extension->load([], $container);
+        $config = [
+            'ongr_task_messenger' => [
+                'publishers' => [
+                    'default' => [
+                        'amqp' => [
+                            'class' => 'PhpAmqpLib\Connection\AMQPConnection',
+                            'host' => '127.0.0.1',
+                            'port' => 5672,
+                            'user' => 'guest',
+                            'password' => 'guest',
+                        ],
+                    ],
+                ],
+            ],
+        ];
 
-        $taskPublisher = $container->findDefinition('ongr_task_messenger.task_publisher');
+        $extension = new ONGRTaskMessengerExtension();
+        $extension->load($config, $container);
+
+        $taskPublisher = $container->findDefinition('ongr_task_messenger.task_publisher.default');
         $this->assertTrue($taskPublisher->hasMethodCall('addPublisher'));
     }
 
@@ -68,6 +101,7 @@ class ONGRTaskMessengerExtensionTest extends \PHPUnit_Framework_TestCase
     protected function getContainer()
     {
         $container = new ContainerBuilder();
+        $container->setParameter('kernel.environment', 'test');
 
         return $container;
     }
@@ -75,21 +109,49 @@ class ONGRTaskMessengerExtensionTest extends \PHPUnit_Framework_TestCase
     /**
      * Tests if right parameters are set.
      *
-     * @param array $config
      * @param array $param
      * @param array $expected
      *
      * @dataProvider getTestParamsData
      */
-    public function testPublishersParameters($config, $param, $expected)
+    public function testPublishersParameters($param, $expected)
     {
         $container = $this->getContainer();
 
         $extension = new ONGRTaskMessengerExtension();
-        $extension->load($config, $container);
+        $extension->load([], $container);
 
         $this->assertTrue($container->hasParameter($param), 'Expected parameter does not exist.');
         $this->assertEquals($expected, $container->getParameter($param), 'Parameter has been set with wrong value.');
+    }
+
+    /**
+     * Test for publisher class not found exception.
+     *
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Publisher FooAMQPPublisher class do not exist.
+     */
+    public function testPublisherClassNotFoundException()
+    {
+        $config = [
+            'ongr_task_messenger' => [
+                'publishers' => [
+                    'custom' => [
+                        'custom' => [
+                            'publisher' => 'FooAMQPPublisher',
+                            'class' => 'PhpAmqpLib\Connection\AMQPConnection',
+                            'host' => '127.0.0.1',
+                            'port' => 5672,
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $container = $this->getContainer();
+
+        $extension = new ONGRTaskMessengerExtension();
+        $extension->load($config, $container);
     }
 
     /**
@@ -97,30 +159,22 @@ class ONGRTaskMessengerExtensionTest extends \PHPUnit_Framework_TestCase
      */
     public function getTestParamsData()
     {
-        $customConfig = $this->getPublishersConfigurationData();
-        $customConfig = array_replace_recursive(
-            $customConfig,
-            [
-                [
-                    'publishers' => [
-                        'amqp' => [
-                            'class' => 'Foo\Bar\AMQPLib',
-                        ],
-                    ],
-                ],
-            ]
-        );
-
         return [
             [
-                [],
-                'ongr_task_messenger.amqp_connection.class',
-                'PhpAmqpLib\Connection\AMQPConnection',
+                'ongr_task_messenger.connection_factory.class',
+                'ONGR\TaskMessengerBundle\Publishers\ConnectionFactory',
             ],
             [
-                $customConfig,
-                'ongr_task_messenger.amqp_connection.class',
-                'Foo\Bar\AMQPLib',
+                'ongr_task_messenger.task_publisher.class',
+                'ONGR\TaskMessengerBundle\Service\TaskPublisher',
+            ],
+            [
+                'ongr_task_messenger.publisher.amqp.class',
+                'ONGR\TaskMessengerBundle\Publishers\AMQPPublisher',
+            ],
+            [
+                'ongr_task_messenger.publisher.beanstalkd.class',
+                'ONGR\TaskMessengerBundle\Publishers\BeanstalkdPublisher',
             ],
         ];
     }
@@ -133,17 +187,22 @@ class ONGRTaskMessengerExtensionTest extends \PHPUnit_Framework_TestCase
         return [
             [
                 'publishers' => [
-                    'amqp' => [
-                        'class' => 'PhpAmqpLib\Connection\AMQPConnection',
-                        'host' => '127.0.0.1',
-                        'port' => 5672,
-                        'user' => 'guest',
-                        'password' => 'guest',
+                    'default' => [
+                        'amqp' => [
+                            'class' => 'PhpAmqpLib\Connection\AMQPConnection',
+                            'host' => '127.0.0.1',
+                            'port' => 5672,
+                            'user' => 'guest',
+                            'password' => 'guest',
+                        ],
                     ],
-                    'beanstalkd' => [
-                        'class' => 'Pheanstalk\Pheanstalk',
-                        'host' => '127.0.0.1',
-                        'port' => 11300,
+                    'custom' => [
+                        'custom' => [
+                            'publisher' => 'ONGR\TaskMessengerBundle\Tests\app\fixture\Acme\TestBundle\Publishers\CustomAMQPPublisher',
+                            'class' => 'PhpAmqpLib\Connection\AMQPConnection',
+                            'host' => '127.0.0.1',
+                            'port' => 5672,
+                        ],
                     ],
                 ],
             ],

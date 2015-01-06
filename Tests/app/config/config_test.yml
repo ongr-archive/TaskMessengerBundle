@@ -51,14 +51,17 @@ doctrine:
     orm:
         auto_generate_proxy_classes: %kernel.debug%
         auto_mapping: true
+
 ongr_task_messenger:
     publishers:
         default:
             amqp: ~
             beanstalkd: ~
-        custom_amqp:
+        foo_publisher:
             custom:
-                publisher: ONGR\TaskMessengerBundle\Tests\app\fixture\AcmeTestBundle\Publishers\CustomAMQPPublisher
+                publisher: ONGR\TaskMessengerBundle\Tests\app\fixture\Acme\TestBundle\Publishers\CustomAMQPPublisher
                 class: 'PhpAmqpLib\Connection\AMQPConnection'
                 host: localhost
                 port: 5672
+                user: guest
+                password: guest

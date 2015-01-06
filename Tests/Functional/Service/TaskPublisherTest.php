@@ -22,7 +22,7 @@ class TaskPublisherTest extends WebTestCase
     public function testPublish()
     {
         $client = self::createClient();
-        $publisher = $client->getContainer()->get('ongr_task_messenger.task_publisher');
+        $publisher = $client->getContainer()->get('ongr_task_messenger.task_publisher.default');
 
         $task = new SyncTask(SyncTask::SYNC_TASK_PRESERVEHOST);
         $task->setName('task_foo');

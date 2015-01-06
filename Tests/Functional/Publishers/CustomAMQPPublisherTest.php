@@ -18,7 +18,7 @@ use PhpAmqpLib\Message\AMQPMessage;
 use Psr\Log\NullLogger;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class AMQPPublisherTest extends WebTestCase
+class CustomAMQPPublisherTest extends WebTestCase
 {
     /**
      * @var AMQPChannel
@@ -34,10 +34,10 @@ class AMQPPublisherTest extends WebTestCase
         $exchangeName = 'general';
 
         $connection = new AMQPConnection(
-            $container->getParameter('ongr_task_messenger.publisher.default.amqp.host'),
-            $container->getParameter('ongr_task_messenger.publisher.default.amqp.port'),
-            $container->getParameter('ongr_task_messenger.publisher.default.amqp.user'),
-            $container->getParameter('ongr_task_messenger.publisher.default.amqp.password')
+            $container->getParameter('ongr_task_messenger.publisher.foo_publisher.custom.host'),
+            $container->getParameter('ongr_task_messenger.publisher.foo_publisher.custom.port'),
+            $container->getParameter('ongr_task_messenger.publisher.foo_publisher.custom.user'),
+            $container->getParameter('ongr_task_messenger.publisher.foo_publisher.custom.password')
         );
 
         $this->channel = $connection->channel();
@@ -62,7 +62,7 @@ class AMQPPublisherTest extends WebTestCase
     {
         $container = $this->getContainer();
 
-        $publisher = $container->get('ongr_task_messenger.publisher.default.amqp');
+        $publisher = $container->get('ongr_task_messenger.publisher.foo_publisher.custom');
         $logger = new NullLogger();
         $publisher->setLogger($logger);
         $task = new SyncTask(SyncTask::SYNC_TASK_PRESERVEHOST);
@@ -82,7 +82,7 @@ class AMQPPublisherTest extends WebTestCase
     {
         $body = json_decode($message->body, true);
 
-        $this->assertEquals($body['task'], 'ongr.task.task_foo');
+        $this->assertEquals($body['task'], 'ongr.acme_task.task_foo');
         $this->assertEquals($body['args'][0], 'command_foo -e test');
     }
 

@@ -25,7 +25,7 @@ class BeanstalkdPublisherTest extends WebTestCase
     {
         $container = $this->getContainer();
 
-        $publisher = $container->get('ongr_task_messenger.task_publisher.beanstalkd');
+        $publisher = $container->get('ongr_task_messenger.publisher.default.beanstalkd');
         $logger = new NullLogger();
         $publisher->setLogger($logger);
         $task = new SyncTask(SyncTask::SYNC_TASK_PRESERVEHOST);
@@ -34,8 +34,8 @@ class BeanstalkdPublisherTest extends WebTestCase
         $publisher->publish($task);
 
         $pheanstalk = new Pheanstalk(
-            $container->getParameter('ongr_task_messenger.beanstalkd_connection.host'),
-            $container->getParameter('ongr_task_messenger.beanstalkd_connection.port')
+            $container->getParameter('ongr_task_messenger.publisher.default.beanstalkd.host'),
+            $container->getParameter('ongr_task_messenger.publisher.default.beanstalkd.port')
         );
         $job = $pheanstalk
             ->watch('general')
