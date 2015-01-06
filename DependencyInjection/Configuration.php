@@ -11,10 +11,12 @@
 
 namespace ONGR\TaskMessengerBundle\DependencyInjection;
 
+use Symfony\Component\Config\Definition\ArrayNode;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
+use Symfony\Component\Config\Definition\PrototypedArrayNode;
 
 /**
  * This is the class that validates and merges configuration from app/config files.
@@ -30,8 +32,6 @@ class Configuration implements ConfigurationInterface
         $rootNode = $treeBuilder->root('ongr_task_messenger');
         $rootNode
             ->children()
-                ->scalarNode('test')
-                ->end()
                 ->append($this->getPublishersNode())
             ->end();
 
@@ -50,15 +50,71 @@ class Configuration implements ConfigurationInterface
         $node = $builder->root('publishers');
 
         $node
-            ->prototype('array')
-            ->info('Defines publishers configuration settings.')
-                ->children()
-                    ->scalarNode('class')->end()
-                    ->scalarNode('host')->end()
-                    ->scalarNode('port')->end()
-                    ->scalarNode('user')->end()
-                    ->scalarNode('password')->end()
-                ->end()
+            ->info('Defines task publishers manager node.')
+                ->prototype('array')
+                ->info('Defines publishers and configuration settings.')
+                    ->children()
+                        ->arrayNode('amqp')
+                            ->children()
+                                ->scalarNode('class')
+                                    ->defaultValue('PhpAmqpLib\Connection\AMQPConnection')
+                                ->end()
+                                ->scalarNode('host')
+                                    ->defaultValue('127.0.0.1')
+                                ->end()
+                                ->scalarNode('port')
+                                    ->defaultValue(5672)
+                                ->end()
+                                ->scalarNode('user')
+                                    ->defaultValue('guest')
+                                ->end()
+                                ->scalarNode('password')
+                                    ->defaultValue('guest')
+                                ->end()
+                            ->end()
+                        ->end()
+                        ->arrayNode('beanstalkd')
+                            ->children()
+                                ->scalarNode('class')
+                                    ->defaultValue('Pheanstalk\Pheanstalk')
+                                ->end()
+                                ->scalarNode('host')
+                                    ->defaultValue('127.0.0.1')
+                                ->end()
+                                ->scalarNode('port')
+                                    ->defaultValue(11300)
+                                ->end()
+                                ->scalarNode('user')
+                                    ->defaultValue(null)
+                                ->end()
+                                ->scalarNode('password')
+                                    ->defaultValue(null)
+                                ->end()
+                            ->end()
+                        ->end()
+                        ->arrayNode('custom')
+                            ->children()
+                                ->scalarNode('class')
+                                    ->isRequired()
+                                ->end()
+                                ->scalarNode('publisher')
+                                    ->isRequired()
+                                ->end()
+                                ->scalarNode('host')
+                                    ->defaultValue('127.0.0.1')
+                                ->end()
+                                ->scalarNode('port')
+                                    ->isRequired()
+                                ->end()
+                                ->scalarNode('user')
+                                    ->defaultValue(null)
+                                ->end()
+                                ->scalarNode('password')
+                                    ->defaultValue(null)
+                                ->end()
+                            ->end()
+                        ->end()
+                    ->end()
             ->end();
 
         return $node;
