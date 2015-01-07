@@ -36,38 +36,35 @@ class ONGRTaskMessengerExtension extends Extension
         $loader->load('services.yml');
 
         if (!empty($config['publishers'])) {
-            $factoryClass = $container->getParameter('ongr_task_messenger.connection_factory.class');
             foreach ($config['publishers'] as $taskPublisher => $publishers) {
                 $taskPublisherDefinition = new Definition(
                     $container->getParameter('ongr_task_messenger.task_publisher.class')
                 );
-
                 $publisherId = sprintf('ongr_task_messenger.task_publisher.%s', $taskPublisher);
+
                 foreach ($publishers as $name => $parameters) {
-                    $this->validatePublisherConfiguration($parameters);
+                    $this->validatePublisherConfiguration($container, $parameters);
                     $this->setPublisherContainerParameters($container, $parameters, $taskPublisher, $name);
 
                     $factoryId = sprintf('ongr_task_messenger.publisher.factory.%s.%s', $taskPublisher, $name);
-                    $factoryDefinition = $this->getFactoryDefinition($factoryClass, $parameters);
-
+                    // Pass configuration parameters to factory service.
+                    $factoryDefinition = $this->getFactoryDefinition($parameters['factory'], $parameters);
                     $container->setDefinition($factoryId, $factoryDefinition);
 
-                    $publisherClassId = sprintf('ongr_task_messenger.publisher.%s.class', $name);
-                    if (!$container->hasParameter($publisherClassId)) {
-                        $publisherClass = $parameters['publisher'];
-                    } else {
-                        $publisherClass = $container->getParameter($publisherClassId);
-                    }
-
-                    $publisherDefinition = new Definition(
-                        $publisherClass,
-                        [
-                            new Reference($factoryId),
-                            $container->getParameter('kernel.environment'),
-                        ]
-                    );
                     $concretePublisherId = sprintf('ongr_task_messenger.publisher.%s.%s', $taskPublisher, $name);
-                    $container->setDefinition($concretePublisherId, $publisherDefinition);
+                    $container->setDefinition(
+                        $concretePublisherId,
+                        new Definition(
+                            new Reference($parameters['publisher']),
+                            [
+                                new Definition(
+                                    '%ongr_task_messenger.connection_factory.class%',
+                                    [new Reference($factoryId)]
+                                ),
+                                '%kernel.environment%',
+                            ]
+                        )
+                    );
 
                     $taskPublisherDefinition->addMethodCall('addPublisher', [new Reference($concretePublisherId)]);
                 }
@@ -77,48 +74,26 @@ class ONGRTaskMessengerExtension extends Extension
     }
 
     /**
-     * Returns connection factory definition.
-     *
-     * @param string $factoryClass
-     * @param array  $parameters
-     *
-     * @return Definition
-     */
-    public function getFactoryDefinition($factoryClass, $parameters)
-    {
-        $factoryDefinition = new Definition(
-            $factoryClass,
-            [
-                $parameters['class'],
-                $parameters['host'],
-                $parameters['port'],
-                $parameters['user'],
-                $parameters['password'],
-            ]
-        );
-
-        return $factoryDefinition;
-    }
-
-    /**
      * Check if defined classes exists.
      *
-     * @param array $parameters
+     * @param ContainerBuilder $container
+     * @param array            $parameters
      *
      * @throws InvalidArgumentException
      */
-    private function validatePublisherConfiguration($parameters)
+    private function validatePublisherConfiguration(ContainerBuilder $container, $parameters)
     {
-        $keys = ['class', 'publisher'];
+        $keys = ['publisher', 'factory'];
 
         foreach ($keys as $key) {
-            if (!empty($parameters[$key])) {
-                if (!class_exists($parameters[$key])) {
-                    throw new InvalidArgumentException(
-                        sprintf('Publisher %s class do not exist.', $parameters['publisher'])
-                    );
-                }
-            }
+            if (!$container->has($parameters[$key])) {
+                throw new InvalidArgumentException("Service '{$parameters[$key]}' do not exits.");
+            };
+        }
+        if (!class_exists($parameters['class'])) {
+            throw new InvalidArgumentException(
+                sprintf('Class %s do not exist.', $parameters['class'])
+            );
         }
     }
 
@@ -138,5 +113,31 @@ class ONGRTaskMessengerExtension extends Extension
                 $value
             );
         }
+    }
+
+    /**
+     * Returns connection factory definition.
+     *
+     * @param string $factoryServiceId
+     * @param array  $parameters
+     *
+     * @return Definition
+     */
+    public function getFactoryDefinition($factoryServiceId, $parameters)
+    {
+        $arguments = !empty($parameters['arguments']) ? $parameters['arguments'] : [];
+        $factoryDefinition = new Definition(
+            new Reference($factoryServiceId),
+            [
+                $parameters['class'],
+                $parameters['host'],
+                $parameters['port'],
+                $parameters['user'],
+                $parameters['password'],
+                $arguments,
+            ]
+        );
+
+        return $factoryDefinition;
     }
 }

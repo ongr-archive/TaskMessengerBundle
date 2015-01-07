@@ -1,5 +1,5 @@
 parameters:
-
+    ongr_task_messenger.simple_connection_factory.class: ONGR\TaskMessengerBundle\Publishers\SimpleConnectionFactory
     ongr_task_messenger.connection_factory.class: ONGR\TaskMessengerBundle\Publishers\ConnectionFactory
     ongr_task_messenger.task_publisher.class: ONGR\TaskMessengerBundle\Service\TaskPublisher
 
@@ -10,6 +10,50 @@ parameters:
 
     ongr_task_messenger.logger.class: Symfony\Component\HttpKernel\Log\NullLogger
 services:
+    ongr_task_messenger.task_publisher:
+        class: %ongr_task_messenger.task_publisher.class%
+
+    ongr_task_messenger.publisher.amqp:
+        class: %ongr_task_messenger.publisher.amqp.class%
+        arguments:
+            - @ongr_task_messenger.simple_connection_factory
+            - %kernel.environment%
+    ongr_task_messenger.publisher.beanstalkd:
+        class: %ongr_task_messenger.publisher.beanstalkd.class%
+        arguments:
+            - @ongr_task_messenger.simple_connection_factory
+            - %kernel.environment%
+     #TODO Fix default values
+    ongr_task_messenger.simple_connection_factory:
+        class: %ongr_task_messenger.simple_connection_factory.class%
+        arguments:
+            - null
+            - null
+            - null
+
+   #TODO Remove this, its here only for testing purposes
+    ongr_task_messenger.publisher.custom_amqp:
+        class: ONGR\TaskMessengerBundle\Tests\app\fixture\Acme\TestBundle\Publishers\CustomAMQPPublisher
+        arguments:
+            - @ongr_task_messenger.simple_connection_factory
+            - %kernel.environment%
+    acme_demo_test.redis_connection_factory:
+        class: ONGR\TaskMessengerBundle\Tests\app\fixture\Acme\TestBundle\Publishers\RedisConnectionFactory
+        arguments:
+            - null
+            - null
+            - null
+
+    acme_demo_test.publisher.redis:
+        class: ONGR\TaskMessengerBundle\Tests\app\fixture\Acme\TestBundle\Publishers\RedisPublisher
+        arguments:
+            - @acme_demo_test.redis_connection_factory
+            - %kernel.environment%
+
+    ongr_task_messenger.connection_factory:
+        class: %ongr_task_messenger.connection_factory.class%
+        arguments: [@ongr_task_messenger.simple_connection_factory]
+
     ongr_task_messenger.sync_task_complete_listener:
         class: %ongr_task_messenger.sync_task_complete_listener.class%
         tags:
