@@ -57,11 +57,22 @@ ongr_task_messenger:
         default:
             amqp: ~
             beanstalkd: ~
+            custom:
+                publisher: ongr_task_messenger.publisher.custom_amqp
+                factory: ongr_task_messenger.simple_connection_factory
+                class: 'PhpAmqpLib\Connection\AMQPConnection'
+                host: 127.0.0.1
+                port: 5672
+                user: test
+                password: test
         foo_publisher:
             custom:
-                publisher: ONGR\TaskMessengerBundle\Tests\app\fixture\Acme\TestBundle\Publishers\CustomAMQPPublisher
-                class: 'PhpAmqpLib\Connection\AMQPConnection'
-                host: localhost
-                port: 5672
+                publisher: acme_demo_test.publisher.redis
+                factory: acme_demo_test.redis_connection_factory
+                class: 'Predis\Client'
+                host: 127.0.0.1
+                port: 6379
                 user: guest
                 password: guest
+                arguments:
+                    scheme: tcp

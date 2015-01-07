@@ -30,6 +30,8 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                 'default' => [
                     'amqp' => [
                         'class' => 'PhpAmqpLib\Connection\AMQPConnection',
+                        'publisher' => 'ongr_task_messenger.publisher.amqp',
+                        'factory' => 'ongr_task_messenger.simple_connection_factory',
                         'host' => '127.0.0.1',
                         'port' => 5672,
                         'user' => 'guest',
@@ -37,6 +39,8 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                     ],
                     'beanstalkd' => [
                         'class' => 'Pheanstalk\Pheanstalk',
+                        'publisher' => 'ongr_task_messenger.publisher.beanstalkd',
+                        'factory' => 'ongr_task_messenger.simple_connection_factory',
                         'host' => '127.0.0.1',
                         'port' => 11300,
                         'user' => null,
@@ -45,12 +49,14 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                 ],
                 'fooPublisher' => [
                     'custom' => [
-                        'publisher' => 'FooAMQPPublisher',
+                        'publisher' => 'ongr_task_messenger.publisher.amqp',
+                        'factory' => 'ongr_task_messenger.simple_connection_factory',
                         'class' => 'PhpAmqpLib\Connection\AMQPConnection',
                         'port' => 123,
                         'host' => '127.0.0.1',
                         'user' => null,
                         'password' => null,
+                        'arguments' => [],
                     ],
                 ],
             ],
@@ -65,7 +71,8 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                     ],
                     'fooPublisher' => [
                         'custom' => [
-                            'publisher' => 'FooAMQPPublisher',
+                            'publisher' => 'ongr_task_messenger.publisher.amqp',
+                            'factory' => 'ongr_task_messenger.simple_connection_factory',
                             'class' => 'PhpAmqpLib\Connection\AMQPConnection',
                             'port' => 123,
                         ],
@@ -77,6 +84,8 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                     'default' => [
                         'amqp' => [
                             'class' => 'PhpAmqpLib\Connection\AMQPConnection',
+                            'publisher' => 'ongr_task_messenger.publisher.amqp',
+                            'factory' => 'ongr_task_messenger.simple_connection_factory',
                             'host' => '127.0.0.1',
                             'port' => 5672,
                             'user' => 'guest',
@@ -85,12 +94,14 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                     ],
                     'fooPublisher' => [
                         'custom' => [
-                            'publisher' => 'FooAMQPPublisher',
+                            'publisher' => 'ongr_task_messenger.publisher.amqp',
+                            'factory' => 'ongr_task_messenger.simple_connection_factory',
                             'class' => 'PhpAmqpLib\Connection\AMQPConnection',
                             'port' => 123,
                             'host' => '127.0.0.1',
                             'user' => null,
                             'password' => null,
+                            'arguments' => [],
                         ],
                     ],
                 ],
@@ -119,7 +130,8 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                     ],
                     'fooPublisher' => [
                         'custom' => [
-                            'publisher' => 'FooAMQPPublisher',
+                            'publisher' => 'ongr_task_messenger.publisher.amqp',
+                            'factory' => 'ongr_task_messenger.simple_connection_factory',
                             'class' => 'PhpAmqpLib\Connection\AMQPConnection',
                             'port' => 123,
                         ],
@@ -136,7 +148,8 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                         ],
                         'fooPublisher' => [
                             'custom' => [
-                                'publisher' => 'FooAMQPPublisher',
+                                'publisher' => 'ongr_task_messenger.publisher.amqp',
+                                'factory' => 'ongr_task_messenger.simple_connection_factory',
                                 'class' => 'PhpAmqpLib\Connection\AMQPConnection',
                                 'port' => 123,
                                 'user' => null,

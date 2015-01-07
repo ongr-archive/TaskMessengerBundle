@@ -34,10 +34,10 @@ class CustomAMQPPublisherTest extends WebTestCase
         $exchangeName = 'general';
 
         $connection = new AMQPConnection(
-            $container->getParameter('ongr_task_messenger.publisher.foo_publisher.custom.host'),
-            $container->getParameter('ongr_task_messenger.publisher.foo_publisher.custom.port'),
-            $container->getParameter('ongr_task_messenger.publisher.foo_publisher.custom.user'),
-            $container->getParameter('ongr_task_messenger.publisher.foo_publisher.custom.password')
+            $container->getParameter('ongr_task_messenger.publisher.default.custom.host'),
+            $container->getParameter('ongr_task_messenger.publisher.default.custom.port'),
+            $container->getParameter('ongr_task_messenger.publisher.default.custom.user'),
+            $container->getParameter('ongr_task_messenger.publisher.default.custom.password')
         );
 
         $this->channel = $connection->channel();
@@ -62,7 +62,7 @@ class CustomAMQPPublisherTest extends WebTestCase
     {
         $container = $this->getContainer();
 
-        $publisher = $container->get('ongr_task_messenger.publisher.foo_publisher.custom');
+        $publisher = $container->get('ongr_task_messenger.publisher.default.custom');
         $logger = new NullLogger();
         $publisher->setLogger($logger);
         $task = new SyncTask(SyncTask::SYNC_TASK_PRESERVEHOST);

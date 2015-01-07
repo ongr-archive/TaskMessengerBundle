@@ -30,7 +30,7 @@ class ONGRTaskMessengerExtensionTest extends WebTestCase
         $this->assertTrue($container->has('ongr_task_messenger.publisher.foo_publisher.custom'));
 
         $defaultPublisher = $container->get('ongr_task_messenger.task_publisher.default');
-        $this->assertEquals(2, count($defaultPublisher->getPublishers()), 'There should be 2 publishers configured.');
+        $this->assertEquals(3, count($defaultPublisher->getPublishers()), 'There should be 3 publishers configured.');
 
         $fooPublisher = $container->get('ongr_task_messenger.task_publisher.foo_publisher');
         $this->assertEquals(1, count($fooPublisher->getPublishers()), 'There should be 1 publisher configured.');

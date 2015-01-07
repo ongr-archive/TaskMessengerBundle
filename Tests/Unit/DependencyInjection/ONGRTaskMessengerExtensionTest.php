@@ -32,17 +32,9 @@ class ONGRTaskMessengerExtensionTest extends \PHPUnit_Framework_TestCase
         $out[] = [
             'ongr_task_messenger.task_publisher.default',
         ];
-        // Case #2 Check second task publisher service.
-        $out[] = [
-            'ongr_task_messenger.task_publisher.custom',
-        ];
         // Case #3 Check AMQP service.
         $out[] = [
             'ongr_task_messenger.publisher.default.amqp',
-        ];
-        // Case #4 Check custom AMQP service.
-        $out[] = [
-            'ongr_task_messenger.publisher.custom.custom',
         ];
 
         return $out;
@@ -126,19 +118,20 @@ class ONGRTaskMessengerExtensionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test for publisher class not found exception.
+     * Test publisher service not found exception.
      *
      * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Publisher FooAMQPPublisher class do not exist.
+     * @expectedExceptionMessage Service 'foo_publisher_service' do not exits.
      */
-    public function testPublisherClassNotFoundException()
+    public function testPublisherServiceNotFoundException()
     {
         $config = [
             'ongr_task_messenger' => [
                 'publishers' => [
                     'custom' => [
                         'custom' => [
-                            'publisher' => 'FooAMQPPublisher',
+                            'factory' => 'foo_factory',
+                            'publisher' => 'foo_publisher_service',
                             'class' => 'PhpAmqpLib\Connection\AMQPConnection',
                             'host' => '127.0.0.1',
                             'port' => 5672,
@@ -194,14 +187,6 @@ class ONGRTaskMessengerExtensionTest extends \PHPUnit_Framework_TestCase
                             'port' => 5672,
                             'user' => 'guest',
                             'password' => 'guest',
-                        ],
-                    ],
-                    'custom' => [
-                        'custom' => [
-                            'publisher' => 'ONGR\TaskMessengerBundle\Tests\app\fixture\Acme\TestBundle\Publishers\CustomAMQPPublisher',
-                            'class' => 'PhpAmqpLib\Connection\AMQPConnection',
-                            'host' => '127.0.0.1',
-                            'port' => 5672,
                         ],
                     ],
                 ],
