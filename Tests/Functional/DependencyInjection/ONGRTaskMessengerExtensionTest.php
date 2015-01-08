@@ -21,14 +21,19 @@ class ONGRTaskMessengerExtensionTest extends WebTestCase
     public function testTaggedServices()
     {
         $container = $this->getContainer();
-        $this->assertTrue($container->has('ongr_task_messenger.task_publisher'));
 
-        $this->assertTrue($container->has('ongr_task_messenger.task_publisher.amqp'));
-        $this->assertTrue($container->has('ongr_task_messenger.task_publisher.beanstalkd'));
+        $this->assertTrue($container->has('ongr_task_messenger.task_publisher.default'));
+        $this->assertTrue($container->has('ongr_task_messenger.publisher.default.amqp'));
+        $this->assertTrue($container->has('ongr_task_messenger.publisher.default.beanstalkd'));
 
-        $taskPublisher = $container->get('ongr_task_messenger.task_publisher');
+        $this->assertTrue($container->has('ongr_task_messenger.task_publisher.foo_publisher'));
+        $this->assertTrue($container->has('ongr_task_messenger.publisher.foo_publisher.custom'));
 
-        $this->assertEquals(2, count($taskPublisher->getPublishers()), 'There should be 2 publishers configured.');
+        $defaultPublisher = $container->get('ongr_task_messenger.task_publisher.default');
+        $this->assertEquals(3, count($defaultPublisher->getPublishers()), 'There should be 3 publishers configured.');
+
+        $fooPublisher = $container->get('ongr_task_messenger.task_publisher.foo_publisher');
+        $this->assertEquals(1, count($fooPublisher->getPublishers()), 'There should be 1 publisher configured.');
     }
 
     /**

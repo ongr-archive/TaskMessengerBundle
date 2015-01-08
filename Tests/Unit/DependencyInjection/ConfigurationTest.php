@@ -27,17 +27,37 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 
         $expectedConfiguration = [
             'publishers' => [
-                'amqp' => [
-                    'class' => 'PhpAmqpLib\Connection\AMQPConnection',
-                    'host' => '127.0.0.1',
-                    'port' => 5672,
-                    'user' => 'guest',
-                    'password' => 'guest',
+                'default' => [
+                    'amqp' => [
+                        'class' => 'PhpAmqpLib\Connection\AMQPConnection',
+                        'publisher' => 'ongr_task_messenger.publisher.amqp',
+                        'factory' => 'ongr_task_messenger.simple_connection_factory',
+                        'host' => '127.0.0.1',
+                        'port' => 5672,
+                        'user' => 'guest',
+                        'password' => 'guest',
+                    ],
+                    'beanstalkd' => [
+                        'class' => 'Pheanstalk\Pheanstalk',
+                        'publisher' => 'ongr_task_messenger.publisher.beanstalkd',
+                        'factory' => 'ongr_task_messenger.simple_connection_factory',
+                        'host' => '127.0.0.1',
+                        'port' => 11300,
+                        'user' => null,
+                        'password' => null,
+                    ],
                 ],
-                'beanstalkd' => [
-                    'class' => 'Pheanstalk\Pheanstalk',
-                    'host' => '127.0.0.1',
-                    'port' => 11300,
+                'fooPublisher' => [
+                    'custom' => [
+                        'publisher' => 'ongr_task_messenger.publisher.amqp',
+                        'factory' => 'ongr_task_messenger.simple_connection_factory',
+                        'class' => 'PhpAmqpLib\Connection\AMQPConnection',
+                        'port' => 123,
+                        'host' => '127.0.0.1',
+                        'user' => null,
+                        'password' => null,
+                        'arguments' => [],
+                    ],
                 ],
             ],
         ];
@@ -46,14 +66,44 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $out[] = [
             [
                 'publishers' => [
-                    'amqp' => [],
-                    'beanstalkd' => [],
+                    'default' => [
+                        'amqp' => [],
+                    ],
+                    'fooPublisher' => [
+                        'custom' => [
+                            'publisher' => 'ongr_task_messenger.publisher.amqp',
+                            'factory' => 'ongr_task_messenger.simple_connection_factory',
+                            'class' => 'PhpAmqpLib\Connection\AMQPConnection',
+                            'port' => 123,
+                        ],
+                    ],
                 ],
             ],
             [
                 'publishers' => [
-                    'amqp' => [],
-                    'beanstalkd' => [],
+                    'default' => [
+                        'amqp' => [
+                            'class' => 'PhpAmqpLib\Connection\AMQPConnection',
+                            'publisher' => 'ongr_task_messenger.publisher.amqp',
+                            'factory' => 'ongr_task_messenger.simple_connection_factory',
+                            'host' => '127.0.0.1',
+                            'port' => 5672,
+                            'user' => 'guest',
+                            'password' => 'guest',
+                        ],
+                    ],
+                    'fooPublisher' => [
+                        'custom' => [
+                            'publisher' => 'ongr_task_messenger.publisher.amqp',
+                            'factory' => 'ongr_task_messenger.simple_connection_factory',
+                            'class' => 'PhpAmqpLib\Connection\AMQPConnection',
+                            'port' => 123,
+                            'host' => '127.0.0.1',
+                            'user' => null,
+                            'password' => null,
+                            'arguments' => [],
+                        ],
+                    ],
                 ],
             ],
         ];
@@ -62,17 +112,29 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $out[] = [
             [
                 'publishers' => [
-                    'amqp' => [
-                        'class' => 'PhpAmqpLib\Connection\AMQPConnection',
-                        'host' => 'localhost',
-                        'port' => 5672,
-                        'user' => 'guest',
-                        'password' => 'guest',
+                    'default' => [
+                        'amqp' => [
+                            'class' => 'PhpAmqpLib\Connection\AMQPConnection',
+                            'host' => 'localhost',
+                            'port' => 5672,
+                            'user' => 'guest',
+                            'password' => 'guest',
+                        ],
+                        'beanstalkd' => [
+                            'class' => 'Foo\Bar\Beanstalkd',
+                            'host' => '127.0.0.1',
+                            'port' => 11300,
+                            'user' => null,
+                            'password' => null,
+                        ],
                     ],
-                    'beanstalkd' => [
-                        'class' => 'Foo\Bar\Beanstalkd',
-                        'host' => '127.0.0.1',
-                        'port' => 11300,
+                    'fooPublisher' => [
+                        'custom' => [
+                            'publisher' => 'ongr_task_messenger.publisher.amqp',
+                            'factory' => 'ongr_task_messenger.simple_connection_factory',
+                            'class' => 'PhpAmqpLib\Connection\AMQPConnection',
+                            'port' => 123,
+                        ],
                     ],
                 ],
             ],
@@ -80,8 +142,20 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                 $expectedConfiguration,
                 [
                     'publishers' => [
-                        'amqp' => ['host' => 'localhost'],
-                        'beanstalkd' => ['class' => 'Foo\Bar\Beanstalkd'],
+                        'default' => [
+                            'amqp' => ['host' => 'localhost'],
+                            'beanstalkd' => ['class' => 'Foo\Bar\Beanstalkd'],
+                        ],
+                        'fooPublisher' => [
+                            'custom' => [
+                                'publisher' => 'ongr_task_messenger.publisher.amqp',
+                                'factory' => 'ongr_task_messenger.simple_connection_factory',
+                                'class' => 'PhpAmqpLib\Connection\AMQPConnection',
+                                'port' => 123,
+                                'user' => null,
+                                'password' => null,
+                            ],
+                        ],
                     ],
                 ]
             ),

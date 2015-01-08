@@ -23,55 +23,25 @@ namespace ONGR\TaskMessengerBundle\Publishers;
 class ConnectionFactory
 {
     /**
-     * @var string
+     * @var ConnectionFactoryInterface
      */
-    protected $class;
+    public $factory;
 
     /**
-     * @var string
+     * @param ConnectionFactoryInterface $factory
      */
-    protected $host;
-
-    /**
-     * @var string
-     */
-    protected $port;
-
-    /**
-     * @var string
-     */
-    protected $user;
-
-    /**
-     * @var string
-     */
-    protected $password;
-
-    /**
-     * @param string $class
-     * @param string $host
-     * @param string $port
-     * @param string $user
-     * @param string $password
-     */
-    public function __construct($class, $host, $port, $user = null, $password = null)
+    public function __construct(ConnectionFactoryInterface $factory)
     {
-        $this->class = $class;
-        $this->host = $host;
-        $this->port = $port;
-        $this->user = $user;
-        $this->password = $password;
+        $this->factory = $factory;
     }
 
     /**
-     * Creates publisher connection.
+     * Returns connection object.
      *
-     * @return object
+     * @return mixed
      */
     public function create()
     {
-        $class = $this->class;
-
-        return new $class($this->host, $this->port, $this->user, $this->password);
+        return $this->factory->create();
     }
 }

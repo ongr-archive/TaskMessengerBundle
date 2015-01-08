@@ -12,20 +12,20 @@
 namespace ONGR\TaskMessengerBundle\Tests\Functional\Publishers;
 
 use ONGR\TaskMessengerBundle\Document\SyncTask;
-use Pheanstalk\Pheanstalk;
 use Psr\Log\NullLogger;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Predis;
 
-class BeanstalkdPublisherTest extends WebTestCase
+class RedisPublisherTest extends WebTestCase
 {
     /**
-     * Test if BeanstalkdPublisher works as expected.
+     * Test if Redis works as expected.
      */
     public function testLogging()
     {
         $container = $this->getContainer();
 
-        $publisher = $container->get('ongr_task_messenger.publisher.default.beanstalkd');
+        $publisher = $container->get('ongr_task_messenger.publisher.foo_publisher.custom');
         $logger = new NullLogger();
         $publisher->setLogger($logger);
         $task = new SyncTask(SyncTask::SYNC_TASK_PRESERVEHOST);
@@ -33,17 +33,21 @@ class BeanstalkdPublisherTest extends WebTestCase
         $task->setCommand('command_foo');
         $publisher->publish($task);
 
-        $pheanstalk = new Pheanstalk(
-            $container->getParameter('ongr_task_messenger.publisher.default.beanstalkd.host'),
-            $container->getParameter('ongr_task_messenger.publisher.default.beanstalkd.port')
-        );
-        $job = $pheanstalk
-            ->watch('general')
-            ->reserve();
-        $jobData = json_decode($job->getData(), true);
+        $redis = new Predis\Client();
+        $this->verifyMessage($redis->get('test'));
+    }
 
-        $this->assertEquals($jobData['task'], 'ongr.task.task_foo');
-        $this->assertEquals($jobData['args'][0], 'command_foo -e test');
+    /**
+     * Test if correct redis message is returned.
+     *
+     * @param string $message
+     */
+    public function verifyMessage($message)
+    {
+        $body = json_decode($message, true);
+
+        $this->assertEquals($body['task'], 'ongr.redis_task.task_foo');
+        $this->assertEquals($body['args'][0], 'command_foo -e test');
     }
 
     /**
