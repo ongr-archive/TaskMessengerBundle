@@ -26,28 +26,13 @@ services:
      #TODO Fix default values
     ongr_task_messenger.simple_connection_factory:
         class: %ongr_task_messenger.simple_connection_factory.class%
-        arguments:
             - null
             - null
             - null
-
-   #TODO Remove this, its here only for testing purposes
     ongr_task_messenger.publisher.custom_amqp:
         class: ONGR\TaskMessengerBundle\Tests\app\fixture\Acme\TestBundle\Publishers\CustomAMQPPublisher
         arguments:
             - @ongr_task_messenger.simple_connection_factory
-            - %kernel.environment%
-    acme_demo_test.redis_connection_factory:
-        class: ONGR\TaskMessengerBundle\Tests\app\fixture\Acme\TestBundle\Publishers\RedisConnectionFactory
-        arguments:
-            - null
-            - null
-            - null
-
-    acme_demo_test.publisher.redis:
-        class: ONGR\TaskMessengerBundle\Tests\app\fixture\Acme\TestBundle\Publishers\RedisPublisher
-        arguments:
-            - @acme_demo_test.redis_connection_factory
             - %kernel.environment%
 
     ongr_task_messenger.connection_factory:
