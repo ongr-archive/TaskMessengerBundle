@@ -56,8 +56,14 @@ class RedisConnectionFactory implements ConnectionFactoryInterface
      * @param string $password
      * @param array  $arguments
      */
-    public function __construct($class, $host, $port, $user = null, $password = null, $arguments = [])
-    {
+    public function __construct(
+        $class = null,
+        $host = null,
+        $port = null,
+        $user = null,
+        $password = null,
+        $arguments = []
+    ) {
         $this->class = $class;
         $this->host = $host;
         $this->port = $port;

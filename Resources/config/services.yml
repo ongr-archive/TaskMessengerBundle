@@ -23,12 +23,8 @@ services:
         arguments:
             - @ongr_task_messenger.simple_connection_factory
             - %kernel.environment%
-     #TODO Fix default values
     ongr_task_messenger.simple_connection_factory:
         class: %ongr_task_messenger.simple_connection_factory.class%
-            - null
-            - null
-            - null
     ongr_task_messenger.publisher.custom_amqp:
         class: ONGR\TaskMessengerBundle\Tests\app\fixture\Acme\TestBundle\Publishers\CustomAMQPPublisher
         arguments:

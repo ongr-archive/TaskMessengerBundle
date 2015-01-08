@@ -48,7 +48,7 @@ class SimpleConnectionFactory implements ConnectionFactoryInterface
      * @param string $user
      * @param string $password
      */
-    public function __construct($class, $host, $port, $user = null, $password = null)
+    public function __construct($class = null, $host = null, $port = null, $user = null, $password = null)
     {
         $this->class = $class;
         $this->host = $host;

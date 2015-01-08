@@ -1,10 +1,6 @@
 services:
     acme_demo_test.redis_connection_factory:
         class: ONGR\TaskMessengerBundle\Tests\app\fixture\Acme\TestBundle\Publishers\RedisConnectionFactory
-        arguments:
-            - null
-            - null
-            - null
 
     acme_demo_test.publisher.redis:
         class: ONGR\TaskMessengerBundle\Tests\app\fixture\Acme\TestBundle\Publishers\RedisPublisher
