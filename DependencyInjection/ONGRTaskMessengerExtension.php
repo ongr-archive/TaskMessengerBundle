@@ -43,7 +43,7 @@ class ONGRTaskMessengerExtension extends Extension
                 $publisherId = sprintf('ongr_task_messenger.task_publisher.%s', $taskPublisher);
 
                 foreach ($publishers as $name => $parameters) {
-                    $this->validatePublisherConfiguration($container, $parameters);
+                    $this->validatePublisherServiceClass($parameters);
                     $this->setPublisherContainerParameters($container, $parameters, $taskPublisher, $name);
 
                     $factoryId = sprintf('ongr_task_messenger.publisher.factory.%s.%s', $taskPublisher, $name);
@@ -76,20 +76,12 @@ class ONGRTaskMessengerExtension extends Extension
     /**
      * Check if defined classes exists.
      *
-     * @param ContainerBuilder $container
-     * @param array            $parameters
+     * @param array $parameters
      *
      * @throws InvalidArgumentException
      */
-    private function validatePublisherConfiguration(ContainerBuilder $container, $parameters)
+    private function validatePublisherServiceClass($parameters)
     {
-        $keys = ['publisher', 'factory'];
-
-        foreach ($keys as $key) {
-            if (!$container->has($parameters[$key])) {
-                throw new InvalidArgumentException("Service '{$parameters[$key]}' do not exits.");
-            };
-        }
         if (!class_exists($parameters['class'])) {
             throw new InvalidArgumentException(
                 sprintf('Class %s do not exist.', $parameters['class'])

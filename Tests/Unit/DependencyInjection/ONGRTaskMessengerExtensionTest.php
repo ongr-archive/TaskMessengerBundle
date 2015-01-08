@@ -121,7 +121,7 @@ class ONGRTaskMessengerExtensionTest extends \PHPUnit_Framework_TestCase
      * Test publisher service not found exception.
      *
      * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Service 'foo_publisher_service' do not exits.
+     * @expectedExceptionMessage Class FooPublisherClass do not exist.
      */
     public function testPublisherServiceNotFoundException()
     {
@@ -132,7 +132,7 @@ class ONGRTaskMessengerExtensionTest extends \PHPUnit_Framework_TestCase
                         'custom' => [
                             'factory' => 'foo_factory',
                             'publisher' => 'foo_publisher_service',
-                            'class' => 'PhpAmqpLib\Connection\AMQPConnection',
+                            'class' => 'FooPublisherClass',
                             'host' => '127.0.0.1',
                             'port' => 5672,
                         ],
