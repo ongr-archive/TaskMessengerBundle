@@ -7,3 +7,10 @@ services:
         arguments:
             - @acme_test.redis_connection_factory
             - %kernel.environment%
+
+    acme_test.sync_task_complete_listener:
+        class: %ongr_task_messenger.sync_task_complete_listener.class%
+        arguments:
+            - @ongr_task_messenger.task_publisher.foo_publisher
+        tags:
+            - { name: kernel.event_listener, event: ongr_connections.sync_task_complete, method: handleEvent }

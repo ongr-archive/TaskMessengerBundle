@@ -35,11 +35,6 @@ services:
         class: %ongr_task_messenger.connection_factory.class%
         arguments: [@ongr_task_messenger.simple_connection_factory]
 
-    ongr_task_messenger.sync_task_complete_listener:
-        class: %ongr_task_messenger.sync_task_complete_listener.class%
-        tags:
-            - { name: kernel.event_listener, event: ongr_connections.sync_task_complete, method: handleEvent }
-
     ongr_task_messenger_logger:
         class: Symfony\Bridge\Monolog\Logger
         arguments: [ongrTaskMessenger]
