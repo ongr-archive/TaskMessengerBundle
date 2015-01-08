@@ -67,8 +67,8 @@ ongr_task_messenger:
                 password: test
         foo_publisher:
             custom:
-                publisher: acme_demo_test.publisher.redis
-                factory: acme_demo_test.redis_connection_factory
+                publisher: acme_test.publisher.redis
+                factory: acme_test.redis_connection_factory
                 class: 'Predis\Client'
                 host: 127.0.0.1
                 port: 6379

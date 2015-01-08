@@ -1,9 +1,9 @@
 services:
-    acme_demo_test.redis_connection_factory:
+    acme_test.redis_connection_factory:
         class: ONGR\TaskMessengerBundle\Tests\app\fixture\Acme\TestBundle\Publishers\RedisConnectionFactory
 
-    acme_demo_test.publisher.redis:
+    acme_test.publisher.redis:
         class: ONGR\TaskMessengerBundle\Tests\app\fixture\Acme\TestBundle\Publishers\RedisPublisher
         arguments:
-            - @acme_demo_test.redis_connection_factory
+            - @acme_test.redis_connection_factory
             - %kernel.environment%
