@@ -8,6 +8,12 @@ services:
             - @acme_test.redis_connection_factory
             - %kernel.environment%
 
+    acme_test.publisher.custom_amqp:
+        class: ONGR\TaskMessengerBundle\Tests\app\fixture\Acme\TestBundle\Publishers\CustomAMQPPublisher
+        arguments:
+            - @ongr_task_messenger.simple_connection_factory
+            - %kernel.environment%
+
     acme_test.sync_task_complete_listener:
         class: %ongr_task_messenger.sync_task_complete_listener.class%
         arguments:
