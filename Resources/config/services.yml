@@ -9,6 +9,7 @@ parameters:
     ongr_task_messenger.sync_task_complete_listener.class: ONGR\TaskMessengerBundle\Service\SyncTasksListener
 
     ongr_task_messenger.logger.class: Symfony\Component\HttpKernel\Log\NullLogger
+    ongr_task_messenger.log_level: debug
 services:
     ongr_task_messenger.task_publisher:
         class: %ongr_task_messenger.task_publisher.class%
@@ -39,4 +40,4 @@ services:
 
     ongr_task_messenger_logger_handler:
         class: Monolog\Handler\StreamHandler
-        arguments: [%kernel.logs_dir%/%kernel.environment%_task_messenger.log, %ongr_connections.log_level%]
+        arguments: [%kernel.logs_dir%/%kernel.environment%_task_messenger.log, %ongr_task_messenger.log_level%]

@@ -144,6 +144,69 @@ class ONGRTaskMessengerExtensionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test if default log level is correct.
+     */
+    public function testDefaultLogLevel()
+    {
+        $container = $this->getContainer();
+
+        $extension = new ONGRTaskMessengerExtension();
+        $extension->load([], $container);
+
+        $expectedDefaultValue = 'debug';
+
+        $this->assertEquals(
+            $expectedDefaultValue,
+            $container->getParameter('ongr_task_messenger.log_level'),
+            'Default log_level value should be \'debug\''
+        );
+    }
+
+    /**
+     * Test non PSR log level value.
+     *
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Invalid log_level value. Valid values: 'emergency', 'alert', 'critical', 'error', 'warning', 'notice', 'info', 'debug'
+     */
+    public function testNonPSRLogLevel()
+    {
+        $container = $this->getContainer();
+
+        $config = [
+            'ongr_task_messenger' => [
+                'log_level' => 'foo',
+            ],
+        ];
+
+        $extension = new ONGRTaskMessengerExtension();
+        $extension->load($config, $container);
+    }
+
+    /**
+     * Test if correct log level is set to container.
+     */
+    public function testSetLogLevel()
+    {
+        $container = $this->getContainer();
+
+        $expected = 'warning';
+        $config = [
+            'ongr_task_messenger' => [
+                'log_level' => 'warning',
+            ],
+        ];
+
+        $extension = new ONGRTaskMessengerExtension();
+        $extension->load($config, $container);
+
+        $this->assertEquals(
+            $expected,
+            $container->getParameter('ongr_task_messenger.log_level'),
+            "Default log_level value should be '{$expected}'"
+        );
+    }
+
+    /**
      * @return array
      */
     public function getTestParamsData()

@@ -53,6 +53,7 @@ doctrine:
         auto_mapping: true
 
 ongr_task_messenger:
+    log_level: debug
     publishers:
         default:
             amqp: ~

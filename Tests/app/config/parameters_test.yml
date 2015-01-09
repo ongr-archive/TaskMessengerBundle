@@ -15,4 +15,3 @@ parameters:
     cdn_url: 'http:%cdn_base_url%'
     cdn_url_ssl: 'https:%cdn_base_url%'
     ongr_connections.import.modifier.class: ONGR\ConnectionsBundle\EventListener\ImportConsumeEventListener
-    ongr_connections.log_level: debug

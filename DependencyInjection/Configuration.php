@@ -30,6 +30,7 @@ class Configuration implements ConfigurationInterface
         $rootNode = $treeBuilder->root('ongr_task_messenger');
         $rootNode
             ->children()
+                ->scalarNode('log_level')->end()
                 ->append($this->getPublishersNode())
             ->end();
 

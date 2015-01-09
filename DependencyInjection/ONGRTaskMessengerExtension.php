@@ -34,6 +34,9 @@ class ONGRTaskMessengerExtension extends Extension
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yml');
+        if (array_key_exists('log_level', $config)) {
+            $this->setLogLevel($container, $config['log_level']);
+        }
 
         if (!empty($config['publishers'])) {
             foreach ($config['publishers'] as $taskPublisher => $publishers) {
@@ -131,5 +134,28 @@ class ONGRTaskMessengerExtension extends Extension
         );
 
         return $factoryDefinition;
+    }
+
+    /**
+     * Set publishers logging level.
+     *
+     * @param ContainerBuilder $container
+     * @param string           $logLevel
+     *
+     * @throws InvalidArgumentException
+     */
+    private function setLogLevel($container, $logLevel)
+    {
+        $logLevels = ['emergency', 'alert', 'critical', 'error', 'warning', 'notice', 'info', 'debug'];
+        if (in_array($logLevel, $logLevels)) {
+            $container->setParameter('ongr_task_messenger.log_level', $logLevel);
+        } else {
+            throw new InvalidArgumentException(
+                sprintf(
+                    'Invalid log_level value. Valid values: \'%s\'',
+                    implode('\', \'', $logLevels)
+                )
+            );
+        }
     }
 }
