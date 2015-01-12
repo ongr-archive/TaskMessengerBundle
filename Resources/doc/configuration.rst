@@ -143,6 +143,19 @@ password   null                                          no       Login password
 ========== ============================================= ======== ======================================
 
 
+Log level
+=========
+
+To specify publishers logging level set ``ongr_task_messenger.log_level`` parameter or in your ``app\config\config.yml``
+Valid values are PSR3 log levels.
+
+Example:
+
+.. code-block:: yaml
+
+    ongr_task_messenger:
+        log_level: debug
+
 
 Example bundle configuration
 ============================
