@@ -63,8 +63,8 @@ ongr_task_messenger:
                 class: 'PhpAmqpLib\Connection\AMQPConnection'
                 host: 127.0.0.1
                 port: 5672
-                user: test
-                password: test
+                user: guest
+                password: guest
         foo_publisher:
             custom:
                 publisher: acme_test.publisher.redis
