@@ -34,9 +34,8 @@ class ONGRTaskMessengerExtension extends Extension
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yml');
-        if (array_key_exists('log_level', $config)) {
-            $this->setLogLevel($container, $config['log_level']);
-        }
+
+        $this->setLogLevel($container, $config['log_level']);
 
         if (!empty($config['publishers'])) {
             foreach ($config['publishers'] as $taskPublisher => $publishers) {
