@@ -24,15 +24,11 @@ class ONGRTaskMessengerExtensionTest extends \PHPUnit_Framework_TestCase
     {
         $out = [];
 
-        // Case #0 Check task listener service.
-        $out[] = [
-            'ongr_task_messenger.sync_task_complete_listener',
-        ];
-        // Case #1 Check task publisher service.
+        // Case #0 Check task publisher service.
         $out[] = [
             'ongr_task_messenger.task_publisher.default',
         ];
-        // Case #3 Check AMQP service.
+        // Case #1 Check AMQP service.
         $out[] = [
             'ongr_task_messenger.publisher.default.amqp',
         ];

@@ -20,12 +20,12 @@ use ONGR\TaskMessengerBundle\Document\SyncTask;
 class SyncTasksListener
 {
     /**
-     * @var TaskPublisherInterface
+     * @var TaskPublisher
      */
     protected $publisher;
 
     /**
-     * @param TaskPublisherInterface $publisher
+     * @param TaskPublisher $publisher
      */
     public function __construct($publisher)
     {
