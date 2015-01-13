@@ -42,7 +42,7 @@ class CustomAMQPPublisherTest extends WebTestCase
 
         $this->channel = $connection->channel();
         list($queueName, ,) = $this->channel->queue_declare();
-        $this->channel->queue_bind($queueName, $exchangeName, 'foxtestvm');
+        $this->channel->queue_bind($queueName, $exchangeName, explode('.', gethostname())[0]);
 
         $this->channel->basic_consume(
             $queueName,
