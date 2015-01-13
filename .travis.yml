@@ -1,0 +1,27 @@
+language: php
+php:
+  - 5.4
+  - 5.5
+  - 5.6
+services:
+  - rabbitmq
+  - redis-server
+install:
+  - sudo pip install -q sphinx
+  - wget -q -O conf.py https://raw.githubusercontent.com/ongr-io/docs-aggregator/master/source/conf-travis.py
+  - mkdir _static
+  - sudo apt-get -y install beanstalkd
+  - composer install --no-interaction
+before_script:
+  - wget http://hg.rabbitmq.com/rabbitmq-management/raw-file/rabbitmq_v3_4_3/bin/rabbitmqadmin
+  - sudo mv rabbitmqadmin /usr/sbin/rabbitmqadmin
+  - sudo chown root:root /usr/sbin/rabbitmqadmin
+  - sudo chmod 755 /usr/sbin/rabbitmqadmin
+  - rabbitmqadmin declare exchange name=general type=direct
+  - beanstalkd -d -p 127.0.0.1 -p 11300
+script:
+  - vendor/bin/phpunit --coverage-text
+  - vendor/bin/phpcs -p --standard=$TRAVIS_BUILD_DIR/vendor/ongr/ongr-strict-standard/ONGR --ignore=vendor,Tests/app ./
+  - sphinx-build -nWq -b html -c . Resources/doc _build/html
+after_script:
+  - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && wget --post-data="" -q -O /dev/null http://readthedocs.org/build/ongr'
