@@ -144,6 +144,86 @@ class ONGRTaskMessengerExtensionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Data provider for testing logging level.
+     *
+     * @return array
+     */
+    public function getTestLoggingLevelData()
+    {
+        $config = [
+            'ongr_task_messenger' => [],
+        ];
+
+        $out = [];
+
+        // Case #0 default value.
+        $out[] = [
+            'debug',
+            array_merge_recursive(
+                $config,
+                [
+                    'ongr_task_messenger' => [],
+                ]
+            ),
+        ];
+
+        // Case #1 specific value.
+        $out[] = [
+            'warning',
+            array_merge_recursive(
+                $config,
+                [
+                    'ongr_task_messenger' => [
+                        'log_level' => 'warning',
+                    ],
+                ]
+            ),
+        ];
+
+        return $out;
+    }
+
+    /**
+     * Test logging level configuration.
+     *
+     * @param string $expectedLevel
+     * @param array  $config
+     *
+     * @dataProvider getTestLoggingLevelData
+     */
+    public function testLogLevel($expectedLevel, $config)
+    {
+        $container = $this->getContainer();
+
+        $extension = new ONGRTaskMessengerExtension();
+        $extension->load($config, $container);
+
+        $this->assertEquals(
+            $expectedLevel,
+            $container->getParameter('ongr_task_messenger.log_level'),
+            "Default log_level value should be '{$expectedLevel}'"
+        );
+    }
+
+    /**
+     * Test non PSR log level value.
+     */
+    public function testNonPSRLogLevel()
+    {
+        $this->setExpectedExceptionRegExp('InvalidArgumentException', '/Invalid log_level value\..*/');
+        $container = $this->getContainer();
+
+        $config = [
+            'ongr_task_messenger' => [
+                'log_level' => 'foo',
+            ],
+        ];
+
+        $extension = new ONGRTaskMessengerExtension();
+        $extension->load($config, $container);
+    }
+
+    /**
      * @return array
      */
     public function getTestParamsData()

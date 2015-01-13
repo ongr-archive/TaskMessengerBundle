@@ -26,6 +26,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $out = [];
 
         $expectedConfiguration = [
+            'log_level' => 'debug',
             'publishers' => [
                 'default' => [
                     'amqp' => [
@@ -80,6 +81,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                 ],
             ],
             [
+                'log_level' => 'debug',
                 'publishers' => [
                     'default' => [
                         'amqp' => [
@@ -111,6 +113,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         // Case #1 Test merged configuration values.
         $out[] = [
             [
+                'log_level' => 'warning',
                 'publishers' => [
                     'default' => [
                         'amqp' => [
@@ -141,6 +144,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
             array_replace_recursive(
                 $expectedConfiguration,
                 [
+                    'log_level' => 'warning',
                     'publishers' => [
                         'default' => [
                             'amqp' => ['host' => 'localhost'],
