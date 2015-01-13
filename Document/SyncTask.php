@@ -80,6 +80,9 @@ class SyncTask
                 $this->setPublishingType('direct');
                 $this->setHost(explode('.', gethostname())[0]);
                 break;
+            default:
+                // No other cases.
+                break;
         }
     }
 
@@ -197,8 +200,6 @@ class SyncTask
     public function getExchange()
     {
         if ($this->exchange === null) {
-            $exchange = 'general';
-
             switch ($this->name) {
                 case 'download':
                     $exchange = 'download';
@@ -214,6 +215,9 @@ class SyncTask
                     break;
                 case 'scheduler':
                     $exchange = 'scheduler';
+                    break;
+                default:
+                    $exchange = 'general';
                     break;
             }
 

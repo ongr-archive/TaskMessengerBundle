@@ -66,9 +66,15 @@ class SyncTasksListener
                     case SyncTaskCompleteEvent::DATA_TYPE_PARTIAL_DOCUMENTS:
                         $task->setArguments(array_merge($task->getArguments(), ['-d']));
                         break;
+                    default:
+                        // No other cases.
+                        break;
                 }
 
                 $this->publisher->publish($task);
+                break;
+            default:
+                // No other cases.
                 break;
         }
     }
