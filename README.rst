@@ -6,8 +6,7 @@ Documentation
 ~~~~~~~~~~~~~
 
 Documentation for ONGRTaskMessengerBundle can be found in
-`here <https://github.com/ongr-io/TaskMessengerBundle/blob/master/Resources/doc/index.rst>`_
-
+`here <http://ongr.readthedocs.org/en/latest/sources/TaskMessengerBundle.git/Resources/doc/index.html>`_.
 
 License
 ~~~~~~~
