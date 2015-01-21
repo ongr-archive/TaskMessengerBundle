@@ -16,7 +16,8 @@ Enable Task Messenger bundle in your ``AppKernel.php``:
            ...
            new ONGR\ConnectionsBundle\ONGRConnectionsBundle(),
            ...
-           new ONGR\MonitoringBundle\ONGRMonitoringBundle(),
+           new ONGR\TaskMessengerBundle\ONGRTaskMessengerBundle(),
+           ...
        ];
    }
 
