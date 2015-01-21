@@ -9,7 +9,7 @@ To register an event listener add it to your bundles ``Resources\config\services
         class: %acme_test.viewed_item_listener.class%
         arguments:
           - @ongr_task_messenger.task_publisher.default
-          #Assuming you have task publisher configured under ``default`` name.
+          #Assuming you have task publisher configured under `default` name.
         tags:
             - { name: kernel.event_listener, event: acme_test.viewed_item_event, method: handleEvent }
 
@@ -28,6 +28,6 @@ To use it in your bundle simply add it to your bundles ``Resources\config\servic
         class: %ongr_task_messenger.sync_task_complete_listener.class%
         arguments:
             - @ongr_task_messenger.task_publisher.default
-            #Assuming you have task publisher configured under ``default`` name.
+            #Assuming you have task publisher configured under `default` name.
         tags:
             - { name: kernel.event_listener, event: ongr_connections.sync_task_complete, method: handleEvent }
