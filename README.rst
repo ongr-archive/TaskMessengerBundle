@@ -5,6 +5,13 @@ Task Messenger Bundle
 Documentation
 ~~~~~~~~~~~~~
 
+Introduction
+~~~~~~~~~~~~
+
+Task Messenger Bundle can be used to publish data to various messaging queues.
+Out of the box bundle can be used to publish tasks to AMQP and beanstalkd messaging queues
+on ``ongr_connections.sync_task_complete`` event.
+
 Documentation for ONGRTaskMessengerBundle can be found in
 `here <http://ongr.readthedocs.org/en/latest/sources/TaskMessengerBundle.git/Resources/doc/index.html>`_.
 
