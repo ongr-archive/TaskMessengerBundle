@@ -1,29 +1,9 @@
 Configuration
 -------------
 
-Enable bundle
-=============
-
-Enable Task Messenger bundle in your ``AppKernel.php``:
-
-``ONGRConnectionsBundle`` must be enabled before ``ONGRTaskMessengerBundle``.
-
-.. code-block:: php
-
-   public function registerBundles()
-   {
-       return [
-           ...
-           new ONGR\ConnectionsBundle\ONGRConnectionsBundle(),
-           ...
-           new ONGR\TaskMessengerBundle\ONGRTaskMessengerBundle(),
-           ...
-       ];
-   }
-
 .. note::
 
-   If you want to use this bundle without using ``ConnectionsBundle`` you must set ``ongr_connections.import.modifier.class`` parameter to some value.
+   If you want to use this bundle without using ``ConnectionsBundle`` you must set ``ongr_connections.import.modifier.class`` parameter to dummy value.
 
 Publishers configuration
 ========================
@@ -111,7 +91,6 @@ password   null                                          Login password
 ========== ============================================= ===========================
 
 
-
 Custom publisher
 ================
 
@@ -170,6 +149,7 @@ For full bundle configuration example see `config_test.yml <https://github.com/o
 Bundles tests
 =============
 
-To run bundles tests ``RabbitMQ`` and ``beanstalkd`` services must be installed. You can find setup example in ``.travis.yml``.
+To run bundles tests ``RabbitMQ``, ``beanstalkd`` and ``redis`` services must be installed. You can find setup example in ``.travis.yml``.
+Additional libraries are required: ``videlalvaro/php-amqplib``, ``pda/pheanstalk`` and ``predis/predis``.
 
 
