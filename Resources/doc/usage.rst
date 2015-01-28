@@ -12,7 +12,7 @@ To register listener for this event to publish messages to AMQP use configuratio
             default:
                 amqp: ~
 
-See `configuration <configuration.rst>`_ for more details on publisher configuration.
+See `configuration <configuration.html>`_ for more details on publisher configuration.
 
 **Usage example using custom publisher (Redis)**
 
@@ -85,7 +85,7 @@ Event object will be passed to publisher.
 3.1 Create custom connection factory
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-You can create custom factory service `see more <custom_factory_service.rst>`_
+You can create custom factory service `see more <custom_factory_service.html>`_
 
 .. code-block:: php
 

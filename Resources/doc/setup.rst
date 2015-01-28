@@ -13,8 +13,6 @@ TaskMessenger bundle is installed using `Composer`_.
 Step 2: Enable TaskMessenger bundle
 -----------------------------------
 
-TaskMessenger bundle depends on ``ConnectionsBundle`` therefore ``ConnectionsBundle`` must be enabled before ``TaskMessengerBundle``.
-
 Enable TaskMessenger bundle in your AppKernel:
 
 .. code:: php
@@ -26,8 +24,6 @@ Enable TaskMessenger bundle in your AppKernel:
     {
         $bundles = return [
            ...
-           new ONGR\ConnectionsBundle\ONGRConnectionsBundle(),
-           ...
            new ONGR\TaskMessengerBundle\ONGRTaskMessengerBundle(),
            ...
        ];;
@@ -36,6 +32,7 @@ Enable TaskMessenger bundle in your AppKernel:
 Step 3: Add configuration
 -------------------------
 
+TaskMessenger has two publishers to work with ``ConnectionsBundle`` ``ongr_connections.sync_task_complete`` event.
 Add minimal configuration for TaskMessenger bundle to use with ConnectionsBundle.
 
 .. code:: yaml
@@ -48,11 +45,11 @@ Add minimal configuration for TaskMessenger bundle to use with ConnectionsBundle
                 beanstalkd: ~
 
 This will register event listener for ``ongr_connections.sync_task_complete`` event and publish message to AMQP and beanstalkd.
-More about `publishers configuration <configuration.rst>`_ and `custom publisher <custom_publisher_service.rst>`_ can be found here.
+More about `publishers configuration <configuration.html>`_ and `custom publisher <custom_publisher_service.html>`_ can be found here.
 
 Step 4: Use your new bundle
 ---------------------------
 
-Usage documentation for the TaskMessenger bundle is available in `<usage.rst>`_.
+Usage documentation for the TaskMessenger bundle is available `here <usage.html>`_.
 
 .. _Composer: https://getcomposer.org
