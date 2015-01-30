@@ -1,10 +1,6 @@
 Configuration
 -------------
 
-.. note::
-
-   If you want to use this bundle without using ``ConnectionsBundle`` you must set ``ongr_connections.import.modifier.class`` parameter to dummy value.
-
 Publishers configuration
 ========================
 
@@ -146,10 +142,9 @@ Example bundle configuration
 
 For full bundle configuration example see `config_test.yml <https://github.com/ongr-io/TaskMessengerBundle/blob/master/Tests/app/config/config_test.yml>`_
 
-Bundles tests
+Running tests
 =============
 
+Bundle should be installed with ``require-dev`` dependencies.
+
 To run bundles tests ``RabbitMQ``, ``beanstalkd`` and ``redis`` services must be installed. You can find setup example in ``.travis.yml``.
-Additional libraries are required: ``videlalvaro/php-amqplib``, ``pda/pheanstalk`` and ``predis/predis``.
-
-
