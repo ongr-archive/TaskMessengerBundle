@@ -12,14 +12,14 @@ namespace ONGR\TaskMessengerBundle\Tests\app\fixture\Acme\TestBundle\Publishers;
 
 use ONGR\TaskMessengerBundle\Document\SyncTask;
 use ONGR\TaskMessengerBundle\Publishers\Exception\PublisherConnectionException;
-use ONGR\TaskMessengerBundle\Publishers\TaskPublisherAbstract;
+use ONGR\TaskMessengerBundle\Publishers\AbstractTaskPublisher;
 use PhpAmqpLib\Exception\AMQPExceptionInterface;
 use PhpAmqpLib\Message\AMQPMessage;
 
 /**
  * Custom AMQP publisher for testing purposes.
  */
-class CustomAMQPPublisher extends TaskPublisherAbstract
+class CustomAMQPPublisher extends AbstractTaskPublisher
 {
     /**
      * Publish message to AMQP.

@@ -16,9 +16,9 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 
 /**
- * Abstract class TaskPublisherAbstract.
+ * Abstract class AbstractTaskPublisher.
  */
-abstract class TaskPublisherAbstract implements LoggerAwareInterface
+abstract class AbstractTaskPublisher implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 

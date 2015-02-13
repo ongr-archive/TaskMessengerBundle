@@ -13,9 +13,9 @@ namespace ONGR\TaskMessengerBundle\Tests\app\fixture\Acme\TestBundle\Publishers;
 
 
 use ONGR\TaskMessengerBundle\Document\SyncTask;
-use ONGR\TaskMessengerBundle\Publishers\TaskPublisherAbstract;
+use ONGR\TaskMessengerBundle\Publishers\AbstractTaskPublisher;
 
-class RedisPublisher extends TaskPublisherAbstract
+class RedisPublisher extends AbstractTaskPublisher
 {
 
     /**

@@ -229,7 +229,7 @@ If you do not need custom factory, you can use ``ongr_task_messenger.simple_conn
 
 .. code-block:: php
 
-    class RedisPublisher extends TaskPublisherAbstract
+    class RedisPublisher extends AbstractTaskPublisher
     {
 
         /**

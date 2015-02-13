@@ -12,7 +12,7 @@
 namespace ONGR\TaskMessengerBundle\Service;
 
 use ONGR\TaskMessengerBundle\Document\SyncTask;
-use ONGR\TaskMessengerBundle\Publishers\TaskPublisherAbstract;
+use ONGR\TaskMessengerBundle\Publishers\AbstractTaskPublisher;
 
 /**
  * Publishes messages to all enabled publishers.
@@ -20,14 +20,14 @@ use ONGR\TaskMessengerBundle\Publishers\TaskPublisherAbstract;
 class TaskPublisher
 {
     /**
-     * @var TaskPublisherAbstract
+     * @var AbstractTaskPublisher
      */
     protected $publishers;
 
     /**
-     * @param TaskPublisherAbstract $publisher
+     * @param AbstractTaskPublisher $publisher
      */
-    public function __construct(TaskPublisherAbstract $publisher = null)
+    public function __construct(AbstractTaskPublisher $publisher = null)
     {
         if ($publisher !== null) {
             $this->publishers = [$publisher];
@@ -47,7 +47,7 @@ class TaskPublisher
     }
 
     /**
-     * @return TaskPublisherAbstract[]
+     * @return AbstractTaskPublisher[]
      */
     public function getPublishers()
     {
@@ -55,7 +55,7 @@ class TaskPublisher
     }
 
     /**
-     * @param TaskPublisherAbstract $publisher
+     * @param AbstractTaskPublisher $publisher
      */
     public function addPublisher($publisher)
     {
