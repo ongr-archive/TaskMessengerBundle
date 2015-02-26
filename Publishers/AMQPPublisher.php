@@ -19,7 +19,7 @@ use PhpAmqpLib\Message\AMQPMessage;
 /**
  * AMQP publisher implementation.
  */
-class AMQPPublisher extends TaskPublisherAbstract
+class AMQPPublisher extends AbstractTaskPublisher
 {
     /**
      * Publish message to AMQP.

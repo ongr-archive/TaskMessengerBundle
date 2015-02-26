@@ -3,7 +3,7 @@ Custom Publisher service
 
 One can create custom publisher service.
 
-Class must extend ``TaskPublisherAbstract`` and implement ``publish`` method.
+Class must extend ``AbstractTaskPublisher`` and implement ``publish`` method.
 
 Example can be found `RedisPublisher.php <https://github.com/ongr-io/TaskMessengerBundle/blob/master/Tests/app/fixture/Acme/TestBundle/Publishers/RedisPublisher.php>`_
 

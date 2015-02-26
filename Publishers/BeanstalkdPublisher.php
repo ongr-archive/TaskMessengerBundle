@@ -17,7 +17,7 @@ use ONGR\TaskMessengerBundle\Publishers\Exception\PublisherConnectionException;
 /**
  * Beanstalkd publisher implementation.
  */
-class BeanstalkdPublisher extends TaskPublisherAbstract
+class BeanstalkdPublisher extends AbstractTaskPublisher
 {
     /**
      * Publish message to beanstalkd.
