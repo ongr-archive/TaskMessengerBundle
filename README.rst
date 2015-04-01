@@ -9,6 +9,18 @@ on ``ongr_connections.sync_task_complete`` event.
 Documentation for ONGRTaskMessengerBundle can be found in
 `here <http://ongr.readthedocs.org/en/latest/sources/TaskMessengerBundle.git/Resources/doc/index.html>`_.
 
+.. image:: https://travis-ci.org/ongr-io/TaskMessengerBundle.svg?branch=master
+    :target: https://travis-ci.org/ongr-io/TaskMessengerBundle
+
+.. image:: https://poser.pugx.org/ongr/task-messenger-bundle/v/stable.svg
+    :target: https://packagist.org/packages/ongr/task-messenger-bundle
+
+.. image:: https://poser.pugx.org/ongr/task-messenger-bundle/v/unstable.svg
+    :target: https://packagist.org/packages/ongr/task-messenger-bundle
+
+.. image:: https://poser.pugx.org/ongr/task-messenger-bundle/license.svg
+    :target: https://packagist.org/packages/ongr/task-messenger-bundle
+
 License
 ~~~~~~~
 
