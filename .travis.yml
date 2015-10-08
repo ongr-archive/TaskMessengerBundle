@@ -1,3 +1,4 @@
+sudo: false
 language: php
 php:
   - 5.4
@@ -7,18 +8,20 @@ services:
   - rabbitmq
   - redis-server
 install:
-  - sudo pip install -q sphinx
+  - wget https://github.com/kr/beanstalkd/archive/v1.9.tar.gz
+  - tar xf v1.9.tar.gz
+  - make -C beanstalkd-1.9/
+  - mv beanstalkd-1.9/beanstalkd .
+  - pip install --upgrade pip --user `whoami`
+  - pip install -q sphinx --user `whoami`
   - wget -q -O conf.py https://raw.githubusercontent.com/ongr-io/docs-aggregator/master/source/conf-travis.py
   - mkdir _static
-  - sudo apt-get -y install beanstalkd
   - composer install --no-interaction
 before_script:
   - wget http://hg.rabbitmq.com/rabbitmq-management/raw-file/rabbitmq_v3_4_3/bin/rabbitmqadmin
-  - sudo mv rabbitmqadmin /usr/sbin/rabbitmqadmin
-  - sudo chown root:root /usr/sbin/rabbitmqadmin
-  - sudo chmod 755 /usr/sbin/rabbitmqadmin
-  - rabbitmqadmin declare exchange name=general type=direct
-  - beanstalkd -d -p 127.0.0.1 -p 11300
+  - chmod 755 ./rabbitmqadmin
+  - ./rabbitmqadmin declare exchange name=general type=direct
+  - start-stop-daemon --start --quiet --oknodo --make-pidfile --background --pidfile $TRAVIS_BUILD_DIR/beanstalkd.pid --exec $TRAVIS_BUILD_DIR/beanstalkd
 script:
   - vendor/bin/phpunit --coverage-text --coverage-clover=coverage.clover
   - vendor/bin/phpcs -p --standard=$TRAVIS_BUILD_DIR/vendor/ongr/ongr-strict-standard/ONGR --ignore=vendor,Tests/app ./
